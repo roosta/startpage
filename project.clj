@@ -4,10 +4,10 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
-  :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
-                 [org.clojure/clojurescript "1.9.473"]]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha15"]
+                 [org.clojure/clojurescript "1.9.495"]]
 
-  :plugins [[lein-cljsbuild "1.1.5"]]
+  :plugins [[lein-cljsbuild "1.1.6-SNAPSHOT"]]
 
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
@@ -20,8 +20,8 @@
                                    :optimizations :advanced
                                    :closure-defines {"goog.DEBUG" false}}}]}
 
-  :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.10"]
+  :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.3.0-alpha3"]
                                   [figwheel-sidecar "0.5.9"]
-                                  [binaryage/devtools "0.9.1"]]
+                                  [binaryage/devtools "0.9.2"]]
                    :plugins [[lein-figwheel "0.5.9"]]
                    :source-paths ["dev" "script"]}})
