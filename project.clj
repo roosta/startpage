@@ -7,7 +7,8 @@
   :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
                  [org.clojure/clojurescript "1.9.473"]
                  [reagent "0.6.1"]
-                 [cljs-jss "6.5.0-0"]]
+                 [cljsjs/react-jss "5.4.0-0" :exclusions [cljsjs/react cljsjs/react-dom]]
+                 #_[cljs-jss "6.5.0-0" :exclusions [cljsjs/react cljsjs/react-dom]]]
 
   :plugins [[lein-cljsbuild "1.1.6-SNAPSHOT"]]
 
