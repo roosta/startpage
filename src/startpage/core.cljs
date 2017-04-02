@@ -5,21 +5,22 @@
    [reagent.core :as r]
    [reagent.debug :as d]))
 
-(def styles {:asd {:background-color "black"}})
+(def styles {"@global" {:body {:background-color "blue"}}
+             :asd {:color "white"
+                   :background-color "black"}})
 
 (defonce inject-sheet (.create js/reactJss))
 (def style-wrapper (inject-sheet (clj->js styles)))
 
 (defn startpage
   []
-  (let [classes (r/atom nil)]
-    (r/create-class
-     {:component-did-mount #(reset! classes (gobj/getValueByKeys % "props" "classes"))
-      :reagent-render
-      (fn []
-        [:div {:class (gobj/get @classes "asd")}
-         "asdadasd"]
-        )})))
+  (r/create-class
+   {:reagent-render
+    (fn []
+      (let [classnames (:classes (r/props (r/current-component)))]
+        [:div {:class (gobj/get classnames "asd")}
+         "asdadasd"])
+      )}))
 
 (def app (r/adapt-react-class (style-wrapper (startpage))))
 
