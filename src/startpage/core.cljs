@@ -16,19 +16,20 @@
 (defn run-figlet
   [input ch]
   (js/figlet input
-             "Standard"
+             "Fraktur"
              (fn [err text]
                (when err
                  (.log js/console "something went wrong")
                  (.dir js/console err))
-               (put! ch text))))
+               (when-not (nil? text)
+                 (put! ch text)))))
 
 (def styles {"@global" {:body {:margin 0
                                :font-family "'Lato Thin', sans-serif"
                                :background-color (-> colors :black :hex)}}
              :root {:color "white"
                     :display "flex"
-                    :height "70vh"
+                    :height "100vh"
                     :align-items "center"
                     :justify-content "center"}
 
