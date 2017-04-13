@@ -1,5 +1,7 @@
 (ns startpage.core
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
+   [cljs.core.async :refer [put! alts! chan <! >! timeout close!]]
    [goog.object :as gobj]
    [startpage.srcery :refer [colors]]
    [reagent.core :as r]
@@ -12,14 +14,14 @@
   (.defaults js/figlet #js {:fontPath "fonts"}))
 
 (defn run-figlet
-  []
-  (js/figlet "hello world"
-          "Standard"
-          (fn [err text]
-            (when err
-              (.log js/console "something went wrong")
-              (.dir js/console err))
-            (.log js/console text))))
+  [input ch]
+  (js/figlet input
+             "Standard"
+             (fn [err text]
+               (when err
+                 (.log js/console "something went wrong")
+                 (.dir js/console err))
+               (put! ch text))))
 
 (def styles {"@global" {:body {:margin 0
                                :font-family "'Lato Thin', sans-serif"
@@ -30,8 +32,8 @@
                     :align-items "center"
                     :justify-content "center"}
 
-             :clock {:font-size "10em"
-                     :border-bottom (str "0.02em solid " (-> colors :white :hex))
+             :clock {:font-size "10px"
+                     ;; :border-bottom (str "0.02em solid " (-> colors :white :hex))
                      :color (-> colors :white :hex)}})
 
 (defonce inject-sheet (.create js/reactJss))
@@ -42,24 +44,36 @@
                        #(reset! timer (js/Date.)) 1000))
 
 (defn clock
-  [classnames]
-  (let [time-str (-> @timer .toTimeString (clojure.string/split " ") first)]
-    [:div
-     {:class (gobj/get classnames "clock")}
-     time-str]))
+  [classnames ascii]
+  [:pre
+   {:class (gobj/get classnames "clock")}
+   ascii
+   ])
 
 
 (defn startpage
   []
-  (r/create-class
-   {:component-will-mount #(do (init-figlet)
-                               (run-figlet))
-    :reagent-render
-    (fn []
-      (let [classnames (:classes (r/props (r/current-component)))]
-        [:div {:class (gobj/get classnames "root")}
-         [clock classnames]])
-      )}))
+  (let [event-ch (chan)
+        time-str (-> @timer .toTimeString (clojure.string/split " ") first)
+        _ (add-watch timer :watcher (fn [_ _ _ new]
+                                      (let [time-str (-> new .toTimeString (clojure.string/split " ") first)]
+                                        (run-figlet time-str event-ch))))
+        result (r/atom "")
+        event-loop (go
+                     (loop []
+                       (let [ascii (<! event-ch)]
+                         (when-not (nil? ascii)
+                           (reset! result ascii)
+                           (recur)))))
+        ]
+    (r/create-class
+     {:component-will-mount #(init-figlet)
+      :reagent-render
+      (fn []
+        (let [classnames (:classes (r/props (r/current-component)))]
+          [:div {:class (gobj/get classnames "root")}
+           [clock classnames @result]])
+        )})))
 
 (def app (r/adapt-react-class (style-wrapper (startpage))))
 
