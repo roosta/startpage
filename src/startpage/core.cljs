@@ -1,17 +1,29 @@
 (ns startpage.core
   (:require
-   [cljsjs.react-jss]
    [goog.object :as gobj]
    [startpage.srcery :refer [colors]]
    [reagent.core :as r]
-   [reagent.debug :as d]))
+   [reagent.debug :as d]
+   [cljsjs.react-jss]
+   [figlet]))
+
+(defn init-figlet
+  []
+  (.defaults js/figlet #js {:fontPath "fonts"}))
+
+(defn run-figlet
+  []
+  (js/figlet "hello world"
+          "Standard"
+          (fn [err text]
+            (when err
+              (.log js/console "something went wrong")
+              (.dir js/console err))
+            (.log js/console text))))
 
 (def styles {"@global" {:body {:margin 0
-                               ;; :font-family "'Ubuntu Mono', monospaced"
-                               ;; :font-family "'VT323', monospaced"
                                :font-family "'Lato Thin', sans-serif"
-                               :background-color (-> colors :black :hex)
-                               }}
+                               :background-color (-> colors :black :hex)}}
              :root {:color "white"
                     :display "flex"
                     :height "70vh"
@@ -23,7 +35,7 @@
                      :color (-> colors :white :hex)}})
 
 (defonce inject-sheet (.create js/reactJss))
-(def style-wrapper (inject-sheet (clj->js styles)))
+(def style-wrapper (.default js/reactJss (clj->js styles)))
 
 (defonce timer (r/atom (js/Date.)))
 (defonce time-updater (js/setInterval
@@ -36,10 +48,13 @@
      {:class (gobj/get classnames "clock")}
      time-str]))
 
+
 (defn startpage
   []
   (r/create-class
-   {:reagent-render
+   {:component-will-mount #(do (init-figlet)
+                               (run-figlet))
+    :reagent-render
     (fn []
       (let [classnames (:classes (r/props (r/current-component)))]
         [:div {:class (gobj/get classnames "root")}
