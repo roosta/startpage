@@ -4,8 +4,17 @@
 
 (def current-page (atom nil))
 
+(defn navigation []
+  [:div [:a {:href "/"} "Home Page"]
+   [:span {:style {:padding "5px"}}]
+   [:a {:href "/page-one"} "Page One"]
+   [:span {:style {:padding "5px"}}]])
+
 (defn home-page []
-  [:div [:h1 "Home Page"]])
+  [:div [navigation] [:h1 "Home Page"]])
+
+(defn page-one []
+  [:div [navigation] [:h1 "Page One"]])
 
 (defn app-view []
   [:div [@current-page]])
@@ -16,5 +25,9 @@
   (.log js/console "home page")
   (reset! current-page home-page))
 
-; the server side doesn't have history, so we want to make sure current-page is populated
+(defroute "/page-one" []
+  (.log js/console "page-one")
+  (reset! current-page page-one))
+
+                                        ; the server side doesn't have history, so we want to make sure current-page is populated
 (reset! current-page home-page)
