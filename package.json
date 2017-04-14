@@ -6,12 +6,11 @@
     "node": "0.12.x"
   },
   "dependencies": {
-    "express": "^4.15.2"
+    "express": "^4.15.2",
+    "serve-static": "^1.12.1"
   },
   "devDependencies": {
     "source-map-support": "0.4.14",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4",
     "ws": "2.2.3"
   }
 }

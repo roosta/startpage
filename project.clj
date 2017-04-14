@@ -7,6 +7,8 @@
   :dependencies [[org.clojure/clojure "1.9.0-alpha15"]
                  [org.clojure/clojurescript "1.9.518"]
                  [reagent "0.6.1"]
+                 [secretary "1.2.3"]
+                 [kibu/pushy "0.3.7"]
                  [cljsjs/react-jss "5.4.0-0" :exclusions [cljsjs/react cljsjs/react-dom]]]
 
   :plugins [[lein-cljsbuild "1.1.6-SNAPSHOT"]]
@@ -19,37 +21,22 @@
              :css-dirs ["resources/public/css"]
              :server-logfile "log/fighweel-server.log"}
 
-  :cljsbuild {:builds {:server
-                       {:id "server"
-                        :source-paths ["src-server"]
-                        :compiler {:main startpage.server
-                                   :output-to "resources/public/js/server-side/server.js"
-                                   :output-dir "resources/public/js/server-side"
-                                   :target :nodejs
-                                   :optimizations :none
-                                   :source-map true}}
+  :cljsbuild {:builds {:server {:source-paths ["src" "src-server"]
+                                :compiler {:main startpage.server
+                                           :output-to "resources/public/js/server-side/server.js"
+                                           :output-dir "resources/public/js/server-side"
+                                           :target :nodejs
+                                           :optimizations :none
+                                           :source-map true}}
 
-                       :dev {:figwheel {:on-jsload  startpage.core/main}
-                             :source-paths ["src"]
-                             :compiler {:main "startpage.core"
-                                        :output-to "resources/public/js/app.js"
-                                        :output-dir "resources/public/js/out"
-                                        :asset-path "/js/out"
+                       :app {:figwheel {:on-jsload  startpage.core/main}
+                             :source-paths ["src" "src-client"]
+                             :compiler {:output-to "resources/public/js/app.js"
+                                        :output-dir "resources/public/js"
                                         :optimizations :none
-                                        :source-map-timestamp true
-                                        :preloads [devtools.preload]
-                                        :external-config {:devtools/config {:features-to-install [:formatters :hints]
-                                                                            :print-config-overrides true}}}}
-                       :min {:source-paths ["src"]
-                             :compiler {:main "startpage.core"
-                                        :output-to "resources/public/js/app.js"
-                                        :verbose true
-                                        :pretty-print false
-                                        :optimizations :advanced
-                                        :closure-defines {"goog.DEBUG" false}}}}}
+                                        :source-map true}}}}
 
   :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.3.0-alpha3"]
-                                  [figwheel-sidecar "0.5.10"]
-                                  [binaryage/devtools "0.9.2"]]
+                                  [figwheel-sidecar "0.5.10"]]
                    :plugins [[lein-figwheel "0.5.10"]]
                    :source-paths ["dev" "script"]}})
