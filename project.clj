@@ -19,7 +19,17 @@
              :css-dirs ["resources/public/css"]
              :server-logfile "log/fighweel-server.log"}
 
-  :cljsbuild {:builds {:dev {:figwheel {:on-jsload  startpage.core/main}
+  :cljsbuild {:builds {:server
+                       {:id "server"
+                        :source-paths ["src-server"]
+                        :compiler {:main startpage.server
+                                   :output-to "resources/public/js/server-side/server.js"
+                                   :output-dir "resources/public/js/server-side"
+                                   :target :nodejs
+                                   :optimizations :none
+                                   :source-map true}}
+
+                       :dev {:figwheel {:on-jsload  startpage.core/main}
                              :source-paths ["src"]
                              :compiler {:main "startpage.core"
                                         :output-to "resources/public/js/app.js"

@@ -1,0 +1,17 @@
+{
+  "name": "startpage",
+  "version": "0.1.0",
+  "private": "true",
+  "engines": {
+    "node": "0.12.x"
+  },
+  "dependencies": {
+    "express": "^4.15.2"
+  },
+  "devDependencies": {
+    "source-map-support": "0.4.14",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "ws": "2.2.3"
+  }
+}
