@@ -15,7 +15,6 @@
    [:body
     [:div#app [body]]
     [:script {:type "text/javascript" :src "goog/base.js"}]
-    [:script {:type "text/javascript" :src "//cdnjs.cloudflare.com/ajax/libs/fetch/1.0.0/fetch.min.js"}]
     [:script {:type "text/javascript" :src "app.js"}]
     [:script {:type                    "text/javascript"
               :dangerouslySetInnerHTML {:__html "goog.require('startpage.client');"}}]]])
