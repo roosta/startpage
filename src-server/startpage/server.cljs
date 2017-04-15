@@ -14,12 +14,13 @@
 
 (defn handle-figlet
   [req res]
-  (let [text (.. req -body -text)]
+  (if-let [text (.. req -body -text)]
     (figlet text "Fraktur" (fn [err text]
-                              (when err
-                                (.log js/console "something went wrong")
-                                (.dir js/console err))
-                              (.send res text)))))
+                             (when err
+                               (.log js/console "something went wrong")
+                               (.dir js/console err))
+                             (.send res text)))
+    (.sendStatus res 400)))
 
 (defn -main []
   (let [app (express)
