@@ -45,7 +45,7 @@
         )))
   )
 
-(defn startpage
+(defn startpage*
   []
   (let [ascii (r/atom "")]
     (r/create-class
@@ -54,12 +54,8 @@
       :reagent-render
       (fn []
         (let [classnames (:classes (r/props (r/current-component)))]
-          [:div {:class (gobj/get classnames "root")}
+          [:div.row {:class (gobj/get classnames "root")}
            [clock classnames @ascii]])
         )})))
 
-(def app (r/adapt-react-class (style-wrapper (startpage))))
-
-(defn ^:export main
-  []
-  (r/render [app] (. js/document (getElementById "app"))))
+(def startpage (r/adapt-react-class (style-wrapper (startpage*))))
