@@ -36,7 +36,7 @@
     (.get app "/" handle-request)
     (.get app "/org" handle-org)
     (.post app "/figlet/" json-parser handle-figlet)
-    (.use app (serve-static "resources/public/js"))
+    (.use app (serve-static "resources/public"))
     (.listen app 3000 (fn []
                         (println "Server started on port 3000")))))
 

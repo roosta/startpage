@@ -14,9 +14,9 @@
             :content "width=device-width, initial-scale=1.0"}]]
    [:body
     [:div#app [body]]
-    [:script {:type "text/javascript" :src "goog/base.js"}]
-    [:script {:type "text/javascript" :src "app.js"}]
-    [:script {:type                    "text/javascript"
+    [:script {:type "text/javascript" :src "js/goog/base.js"}]
+    [:script {:type "text/javascript" :src "js/app.js"}]
+    [:script {:type "text/javascript"
               :dangerouslySetInnerHTML {:__html "goog.require('startpage.client');"}}]]])
 
 (defn ^:export render-page [path]
