@@ -6,14 +6,13 @@
    [startpage.srcery :refer [colors]]
    [reagent.core :as r]
    [reagent.debug :as d]
-   [cljsjs.react-jss]
-   [figlet]))
+   [cljsjs.react-jss]))
 
-(defn init-figlet
+#_(defn init-figlet
   []
   (.defaults js/figlet #js {:fontPath "fonts"}))
 
-(defn run-figlet
+#_(defn run-figlet
   [input ch]
   (js/figlet input
              "Fraktur"
@@ -33,7 +32,7 @@
                     :align-items "center"
                     :justify-content "center"}
 
-             :clock {:font-size "10px"
+             :clock {:font-size "50px"
                      ;; :border-bottom (str "0.02em solid " (-> colors :white :hex))
                      :color (-> colors :white :hex)}})
 
@@ -44,36 +43,46 @@
 (defonce time-updater (js/setInterval
                        #(reset! timer (js/Date.)) 1000))
 
-(defn clock
+#_(defn clock
   [classnames ascii]
   [:pre
    {:class (gobj/get classnames "clock")}
    ascii
    ])
 
+(defn clock
+  [classnames]
+  (let [time-str (-> @timer .toTimeString (clojure.string/split " ") first)]
+    [:div
+     {:class (gobj/get classnames "clock")}
+     time-str
+     ]))
+
 
 (defn startpage
   []
-  (let [event-ch (chan)
-        time-str (-> @timer .toTimeString (clojure.string/split " ") first)
-        _ (add-watch timer :watcher (fn [_ _ _ new]
-                                      (let [time-str (-> new .toTimeString (clojure.string/split " ") first)]
-                                        (run-figlet time-str event-ch))))
-        result (r/atom "")
-        event-loop (go
-                     (loop []
-                       (let [ascii (<! event-ch)]
-                         (when-not (nil? ascii)
-                           (reset! result ascii)
-                           (recur)))))
+  (let [
+        ;; event-ch (chan)
+        ;; time-str (-> @timer .toTimeString (clojure.string/split " ") first)
+        ;; _ (add-watch timer :watcher (fn [_ _ _ new]
+        ;;                               (let [time-str (-> new .toTimeString (clojure.string/split " ") first)]
+        ;;                                 (run-figlet time-str event-ch))))
+        ;; result (r/atom "")
+        ;; event-loop (go
+        ;;              (loop []
+        ;;                (let [ascii (<! event-ch)]
+        ;;                  (when-not (nil? ascii)
+        ;;                    (reset! result ascii)
+        ;;                    (recur)))))
         ]
     (r/create-class
-     {:component-will-mount #(init-figlet)
+     {
+      ;; :component-will-mount #(init-figlet)
       :reagent-render
       (fn []
         (let [classnames (:classes (r/props (r/current-component)))]
           [:div {:class (gobj/get classnames "root")}
-           [clock classnames @result]])
+           [clock classnames]])
         )})))
 
 (def app (r/adapt-react-class (style-wrapper (startpage))))

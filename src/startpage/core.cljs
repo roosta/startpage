@@ -1,37 +1,21 @@
 (ns startpage.core
   (:require [reagent.core :as r]
             [reagent.debug :as d]
+            [startpage.home :refer [app]]
             [secretary.core :as secretary :refer-macros [defroute]]))
 
 (def current-page (r/atom nil))
 
-(defn navigation []
-  [:div [:a {:href "/"} "Home Page"]
-   [:span {:style {:padding "5px"}}]
-   [:a {:href "/page-one"} "Page One"]
-   [:span {:style {:padding "5px"}}]])
-
-(defn home-page []
-  [:div [navigation] [:h1 "Home Page"]])
-
-(defn page-one []
-  [:div [navigation] [:h1 "Page One"]])
+(secretary/set-config! :prefix "/")
 
 (defn app-view []
   [:div [@current-page]])
 
-(secretary/set-config! :prefix "/")
-
 (defroute "/" []
-  (.log js/console "home page")
-  (reset! current-page home-page))
-
-(defroute "/page-one" []
-  (.log js/console "page-one")
-  (reset! current-page page-one))
+  (reset! current-page app))
 
                                         ; the server side doesn't have history, so we want to make sure current-page is populated
-(reset! current-page home-page)
+(reset! current-page app)
 
 (defn on-js-reload
   []
