@@ -8,8 +8,6 @@
 (def serve-static (nodejs/require "serve-static"))
 (def figlet (nodejs/require "figlet"))
 (def body-parser (nodejs/require "body-parser"))
-;; (def org (nodejs/require "org"))
-;; (def fs (nodejs/require "fs"))
 (def org (nodejs/require "org-mode-parser"))
 
 (defn handle-request [req res]
@@ -21,17 +19,6 @@
                              (fn [node-list]
                                (.send res node-list)))]
     (.sendStatus res 400)))
-
-#_(defn handle-org
-  [req res]
-  (let [parser (org.Parser.)
-        org-document (.parse parser "* hello world")
-        html-document (.convert org-document (.-ConverterHTML org) #js {:headerOffset 1
-                                                                        :exportFromLineNumber false
-                                                                        :suppressSubScriptHandling false
-                                                                        :suppressAutoLink false})]
-    (.send res html-document)
-    ))
 
 (defn handle-figlet
   [req res]
