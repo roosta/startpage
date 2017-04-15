@@ -11,7 +11,8 @@
    [:head
     [:meta {:charset "utf-8"}]
     [:meta {:name    "viewport"
-            :content "width=device-width, initial-scale=1.0"}]]
+            :content "width=device-width, initial-scale=1.0"}]
+    [:link {:href "css/flexboxgrid.min.css" :rel "stylesheet" :type "text/css"}]]
    [:body
     [:div#app [body]]
     [:script {:type "text/javascript" :src "js/goog/base.js"}]
