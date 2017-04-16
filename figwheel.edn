@@ -1,0 +1,21 @@
+{:open-file-command "emacs-file-opener"
+ :css-dirs ["resources/public/css"]
+ :server-logfile "log/fighweel-server.log"
+ :builds [{:id "app"
+           :figwheel {:on-jsload "startpage.core/on-js-reload"}
+           :source-paths ["src" "src-client"]
+           :compiler {:output-to "resources/public/js/app.js"
+                      :output-dir "resources/public/js"
+                      :optimizations :none
+                      :preloads [devtools.preload]
+                      :source-map true}}
+
+          {:id "server"
+           :figwheel true
+           :source-paths ["src" "src-server"]
+           :compiler {:main startpage.server
+                      :output-to "resources/public/js/server-side/server.js"
+                      :output-dir "resources/public/js/server-side"
+                      :target :nodejs
+                      :optimizations :none
+                      :source-map true}}]}

@@ -17,25 +17,25 @@
 
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
-  :figwheel {:open-file-command "emacs-file-opener"
-             :css-dirs ["resources/public/css"]}
+  ;; :figwheel {:open-file-command "emacs-file-opener"
+  ;;            :build-ids ["app" "server"]
+  ;;            :css-dirs ["resources/public/css"]}
 
+  ;; :cljsbuild {:builds {:app {:figwheel {:on-jsload "startpage.core/on-js-reload"}
+  ;;                            :source-paths ["src" "src-client"]
+  ;;                            :compiler {:output-to "resources/public/js/app.js"
+  ;;                                       :output-dir "resources/public/js"
+  ;;                                       :optimizations :none
+  ;;                                       :preloads [devtools.preload]
+  ;;                                       :source-map true}}
 
-  :cljsbuild {:builds {:app {:figwheel {:on-jsload "startpage.core/on-js-reload"}
-                             :source-paths ["src" "src-client"]
-                             :compiler {:output-to "resources/public/js/app.js"
-                                        :output-dir "resources/public/js"
-                                        :optimizations :none
-                                        :preloads [devtools.preload]
-                                        :source-map true}}
-
-                       :server {:source-paths ["src" "src-server"]
-                                :compiler {:main startpage.server
-                                           :output-to "resources/public/js/server-side/server.js"
-                                           :output-dir "resources/public/js/server-side"
-                                           :target :nodejs
-                                           :optimizations :none
-                                           :source-map true}}}}
+  ;;                      :server {:source-paths ["src" "src-server"]
+  ;;                               :compiler {:main startpage.server
+  ;;                                          :output-to "resources/public/js/server-side/server.js"
+  ;;                                          :output-dir "resources/public/js/server-side"
+  ;;                                          :target :nodejs
+  ;;                                          :optimizations :none
+  ;;                                          :source-map true}}}}
 
   :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.3.0-alpha3"]
                                   [figwheel-sidecar "0.5.10"]]
