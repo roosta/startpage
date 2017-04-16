@@ -13,16 +13,12 @@
                                :font-family "'Lato Thin', sans-serif"
                                :background-color (-> colors :black :hex)}}
              :root {:color "white"
-                    :display "flex"
-                    :height "100vh"
-                    :align-items "center"
-                    :justify-content "center"}
+                    :height "100vh"}
 
              :clock {:font-size "10px"
                      ;; :border-bottom (str "0.02em solid " (-> colors :white :hex))
                      :color (-> colors :white :hex)}})
 
-(defonce inject-sheet (.create js/reactJss))
 (def style-wrapper (.default js/reactJss (clj->js styles)))
 
 (defonce timer (r/atom (js/Date.)))
@@ -33,17 +29,14 @@
   [classnames ascii]
   [:pre
    {:class (gobj/get classnames "clock")}
-   ascii
-   ])
+   ascii])
 
 (defn watcher-fn
   [_ _ _ new ref]
   (let [time-str (-> new .toTimeString (clojure.string/split " ") first)]
     (go
       (when-let [resp (<! (http/post "/figlet" {:json-params {:text time-str}}))]
-        (reset! ref (:body resp))
-        )))
-  )
+        (reset! ref (:body resp))))))
 
 (defn startpage*
   []

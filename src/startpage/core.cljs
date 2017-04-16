@@ -4,12 +4,12 @@
             [startpage.home :refer [startpage]]
             [secretary.core :as secretary :refer-macros [defroute]]))
 
-(def current-page (r/atom nil))
+(defonce current-page (r/atom nil))
 
 (secretary/set-config! :prefix "/")
 
 (defn app-view []
-  [:div [@current-page]])
+  [:div.container [@current-page]])
 
 (defroute "/" []
   (reset! current-page startpage))
@@ -19,4 +19,4 @@
 
 (defn on-js-reload
   []
-  (d/log "figwheel reloaded!"))
+  (reset! current-page startpage))
