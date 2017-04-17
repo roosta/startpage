@@ -16,9 +16,9 @@
   :plugins [[lein-cljsbuild "1.1.6-SNAPSHOT"]]
 
   :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.3.0-alpha3"]
+                                  [binaryage/devtools "0.9.3"]
                                   [figwheel-sidecar "0.5.10"]]
-                   :plugins [[lein-figwheel "0.5.10"]
-                             [binaryage/devtools "0.9.3"]]
+                   :plugins [[lein-figwheel "0.5.10"]]
                    :source-paths ["dev" "script"]}}
 
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
