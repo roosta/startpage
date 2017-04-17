@@ -9,39 +9,45 @@
    [cljs-css-modules.macro :refer-macros [defstyle]]
    [reagent.debug :as d]))
 
-(defonce org (r/atom []))
-(defn get-org!
-  []
-  (go
-    (let [resp (<! (http/get "/org"))]
-      (reset! org (:body resp)))))
+;; (defonce org (r/atom []))
 
 (defonce timer (r/atom (js/Date.)))
 (defonce time-updater (js/setInterval
                        #(reset! timer (js/Date.))
                        1000))
-(defonce org-updater (js/setInterval
-                      #(get-org!)
-                      300000))
 
 (defn reddit-feed
   []
   [:div "reddit feed here"])
 
+(defn get-org!
+  [ref]
+  (go
+    (let [resp (<! (http/get "/org"))]
+      (reset! ref (:body resp)))))
+
 (defstyle org-styles
   [:.root {:color (-> colors :bright-white :hex)}]
   )
 
-(defn org-component
-  [data]
-  [:div
-   {:class (:root org-styles)}
-   [:ul]
-   (for [node data]
-     ^{:key (:headline node)}
-     [:li (:headline node)]
-     )
-   ])
+(defn org
+  []
+  (let [org-data (r/atom [])
+        org-updater (js/setInterval
+                     #(get-org! org-data)
+                     300000)]
+    (r/create-class
+     {:component-will-mount #(get-org! org-data)
+      :reagent-render
+      (fn []
+        [:div
+         {:class (:root org-styles)}
+         [:ul]
+         (for [node @org-data]
+           ^{:key (:headline node)}
+           [:li (:headline node)]
+           )
+         ])})))
 
 (defstyle clock-style
   [:.root {:font-size "10px"
@@ -76,14 +82,11 @@
   (let [ascii (r/atom "")]
     (r/create-class
      {:component-did-mount (fn []
-                             (get-org!)
                              (add-watch timer :watcher #(watcher-fn %1 %2 %3 %4 ascii)))
       :reagent-render
       (fn []
         [:div {:class (:root startpage-style)}
-         [org-component @org]
+         [org]
          [clock @ascii]
          [reddit-feed]
          ])})))
-
-#_(def startpage (r/adapt-react-class (style-wrapper (startpage*))))
