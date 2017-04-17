@@ -11,11 +11,6 @@
 
 ;; (defonce org (r/atom []))
 
-(defonce timer (r/atom (js/Date.)))
-(defonce time-updater (js/setInterval
-                       #(reset! timer (js/Date.))
-                       1000))
-
 (defn reddit-feed
   []
   [:div "reddit feed here"])
@@ -38,6 +33,7 @@
                      300000)]
     (r/create-class
      {:component-will-mount #(get-org! org-data)
+      :component-will-unmount #(js/clearInterval org-updater)
       :reagent-render
       (fn []
         [:div
@@ -45,9 +41,7 @@
          [:ul]
          (for [node @org-data]
            ^{:key (:headline node)}
-           [:li (:headline node)]
-           )
-         ])})))
+           [:li (:headline node)])])})))
 
 (defstyle clock-style
   [:.root {:font-size "10px"
@@ -55,21 +49,29 @@
            :color (-> colors :bright-white :hex)}]
   [:.clock {}])
 
+(defn get-figlet!
+  [ref]
+  (go
+    (let [time-str (-> (js/Date.) .toTimeString (clojure.string/split " ") first)
+          resp (<! (http/post "/figlet" {:json-params {:text time-str}}))]
+      (reset! ref (:body resp)))))
+
 (defn clock
-  [ascii]
-  [:div
-   {:class (:root clock-style)}
-   [:pre
-    {:class (:clock clock-style)}
-    ascii]])
-
-(defn watcher-fn
-  [_ _ _ new ref]
-  (let [time-str (-> new .toTimeString (clojure.string/split " ") first)]
-    (go
-      (when-let [resp (<! (http/post "/figlet" {:json-params {:text time-str}}))]
-        (reset! ref (:body resp))))))
-
+  []
+  (let [ascii (r/atom "")
+        time-updater (js/setInterval
+                      #(get-figlet! ascii)
+                      1000)]
+    (r/create-class
+     {:component-will-mount #(get-figlet! ascii)
+      :component-will-unmount #(js/clearInterval time-updater)
+      :reagent-render
+      (fn []
+        [:div
+         {:class (:root clock-style)}
+         [:pre
+          {:class (:clock clock-style)}
+          @ascii]])})))
 
 (defstyle startpage-style
   [:.root {:color "white"
@@ -79,14 +81,11 @@
 
 (defn startpage
   []
-  (let [ascii (r/atom "")]
-    (r/create-class
-     {:component-did-mount (fn []
-                             (add-watch timer :watcher #(watcher-fn %1 %2 %3 %4 ascii)))
-      :reagent-render
-      (fn []
-        [:div {:class (:root startpage-style)}
-         [org]
-         [clock @ascii]
-         [reddit-feed]
-         ])})))
+  (r/create-class
+   {:reagent-render
+    (fn []
+      [:div {:class (:root startpage-style)}
+       [org]
+       [clock]
+       [reddit-feed]
+       ])}))
