@@ -22,18 +22,22 @@
                      ;; :border-bottom (str "0.02em solid " (-> colors :white :hex))
                      :color (-> colors :white :hex)}})
 
+(def org (r/atom nil))
+(defn get-org
+  []
+  (go
+    (let [resp (<! (http/get "/org"))]
+      (reset! org (:body resp)))))
+
 (def style-wrapper (.default js/reactJss (clj->js styles)))
 
 (defonce timer (r/atom (js/Date.)))
 (defonce time-updater (js/setInterval
-                       #(reset! timer (js/Date.)) 1000))
-
-(defn org
-  []
-  (go
-    (let [resp (<! (http/get "/org"))]
-      (d/log (:body resp))))
-  )
+                       #(reset! timer (js/Date.))
+                       1000))
+(defonce org-updater (js/setInterval
+                      #(get-org)
+                      300000))
 
 (defn clock
   [classnames ascii]
@@ -53,7 +57,7 @@
   (let [ascii (r/atom "")]
     (r/create-class
      {:component-did-mount (fn []
-                             (org)
+                             (get-org)
                              (add-watch timer :watcher #(watcher-fn %1 %2 %3 %4 ascii)))
       :reagent-render
       (fn []
