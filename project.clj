@@ -23,7 +23,7 @@
 
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
-  :cljsbuild {:builds {:min {:source-paths ["src" "src-client"]
-                             :compiler {:output-to "resources/public/js/app.js"
-                                        :output-dir "resources/public/js"
-                                        :optimizations :advanced}}}})
+  :cljsbuild {:builds {:app-min {:source-paths ["src/client"]
+                                 :compiler {:output-to "resources/public/js/app.js"
+                                            :output-dir "resources/public/js"
+                                            :optimizations :advanced}}}})
