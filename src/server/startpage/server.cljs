@@ -29,7 +29,7 @@
 (defn handle-figlet
   [req res]
   (if-let [text (.. req -body -text)]
-    (figlet text "Fraktur" (fn [err text]
+    (figlet text "DOS Rebel" (fn [err text]
                              (when err
                                (.log js/console "something went wrong")
                                (.dir js/console err))

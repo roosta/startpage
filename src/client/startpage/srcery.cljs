@@ -21,8 +21,7 @@
              :cyan           {:hex  "#0AAEB3"
                               :rgb  [10, 174, 179]
                               :code 6}
-             :grey           {:hex  "#918175"
-                              :alt  "white"
+             :white           {:hex  "#918175"
                               :rgb  [145, 129, 117]
                               :code 7 }
              :bright-black   {:hex  "#2D2B28"
@@ -46,7 +45,6 @@
              :bright-cyan    {:hex  "#53FDE9"
                               :rgb  [83, 253, 233]
                               :code 14}
-             :white          {:hex  "#FCE8C3"
-                              :alt  "bright-white"
+             :bright-white    {:hex  "#FCE8C3"
                               :rgb  [252, 232, 195]
                               :code 15}})
