@@ -9,7 +9,7 @@
 (secretary/set-config! :prefix "/")
 
 (defn app-view []
-  [:div.container [@current-page]])
+  [:div [@current-page]])
 
 (defroute "/" []
   (reset! current-page startpage))
