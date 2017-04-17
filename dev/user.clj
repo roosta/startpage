@@ -5,4 +5,4 @@
 
 (defn stop [] (ra/stop-figwheel!))
 
-(defn cljs [& builds] (apply ra/cljs-repl builds))
+(defn cljs [build] (ra/cljs-repl build))
