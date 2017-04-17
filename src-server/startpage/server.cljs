@@ -13,7 +13,6 @@
 (defonce http (nodejs/require "http"))
 (defonce json-parser (.json body-parser))
 
-
 ;; app gets redefined on reload
 (def app (express))
 
@@ -22,7 +21,7 @@
 
 (defn handle-org
   [req res]
-  (if-let [node-list (.makelist org "README.org"
+  (if-let [node-list (.makelist org "TODOs.org"
                              (fn [node-list]
                                (.send res node-list)))]
     (.sendStatus res 400)))
@@ -36,16 +35,6 @@
                                (.dir js/console err))
                              (.send res text)))
     (.sendStatus res 400)))
-
-#_(defn -main []
-  (let [app (express)
-        json-parser (.json body-parser)]
-    (.get app "/" handle-request)
-    (.get app "/org" handle-org)
-    (.post app "/figlet/" json-parser handle-figlet)
-    (.use app (serve-static "resources/public"))
-    (.listen app 3000 (fn []
-                        (println "Server started on port 3000")))))
 
 ;; routes get redefined on each reload
 (.get app "/" handle-request)
