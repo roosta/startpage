@@ -3,19 +3,22 @@
  :server-logfile "log/fighweel-server.log"
  :builds [{:id "app"
            :figwheel {:on-jsload "startpage.core/on-js-reload"}
-           :source-paths ["src" "src-client"]
-           :compiler {:output-to "resources/public/js/app.js"
-                      :output-dir "resources/public/js"
+           :source-paths ["src/client"]
+           :compiler {:main startpage.core
+                      :asset-path "/js/out"
+                      :output-to "resources/public/js/app.js"
+                      :output-dir "resources/public/js/out"
                       :optimizations :none
                       :preloads [devtools.preload]
                       :source-map true}}
 
           {:id "server"
            :figwheel true
-           :source-paths ["src" "src-server"]
+           :source-paths ["src/server"]
            :compiler {:main startpage.server
-                      :output-to "resources/public/js/server-side/server.js"
+                      :output-to "resources/public/js/server.js"
                       :output-dir "resources/public/js/server-side"
                       :target :nodejs
+                      :preloads [devtools.preload]
                       :optimizations :none
                       :source-map true}}]}

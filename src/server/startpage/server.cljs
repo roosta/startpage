@@ -1,7 +1,7 @@
 (ns startpage.server
   (:require [cljs.nodejs :as nodejs]
-            [figwheel.client :as fw]
-            [site.tools :as tools]))
+            [startpage.handler :as handler]
+            [figwheel.client :as fw]))
 
 (nodejs/enable-util-print!)
 
@@ -17,7 +17,7 @@
 (def app (express))
 
 (defn handle-request [req res]
-  (.send res (tools/render-page (.-path req))))
+  (.send res (handler/render-page (.-path req))))
 
 (defn handle-org
   [req res]
