@@ -3,13 +3,19 @@
   (:require [reagent.core :as r]
             [reagent.debug :as d]
             [pushy.core :as pushy]
+            [cljs-css-modules.macro :refer-macros [defstyle]]
             [startpage.home :refer [startpage]]
+            [startpage.srcery :refer [colors]]
             [secretary.core :as secretary :refer-macros [defroute]]))
 
 (enable-console-print!)
 
 (defonce current-page (r/atom nil))
 
+(defstyle core-style
+  [:body {:margin 0
+          :font-family "monospace"
+          :background-color (-> colors :black :hex)}])
 
 (defn appframe
   []

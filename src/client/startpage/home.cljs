@@ -6,28 +6,8 @@
    [startpage.srcery :refer [colors]]
    [cljs-http.client :as http]
    [reagent.core :as r]
-   [reagent.debug :as d]
-   [cljsjs.react-jss]))
-
-(def styles {"@global" {:body {:margin 0
-                               :font-family "monospace"
-                               :background-color (-> colors :black :hex)}}
-             :root {:color "white"
-                    :display "flex"
-                    :justify-content "space-around"
-                    :height "100vh"}
-
-             :reddit-feed {}
-             :org-root {:color (-> colors :bright-white :hex)}
-
-             :clock-root {:font-size "10px"
-                          ;; :position "relative"
-                          :width "450px"
-                          ;; :border-bottom (str "0.02em solid " (-> colors :bright-white :hex))
-                          :color (-> colors :bright-white :hex)}
-             :clock-child {
-                           ;; :position "absolute"
-                           }})
+   [cljs-css-modules.macro :refer-macros [defstyle]]
+   [reagent.debug :as d]))
 
 (defonce org (r/atom []))
 (defn get-org!
@@ -35,8 +15,6 @@
   (go
     (let [resp (<! (http/get "/org"))]
       (reset! org (:body resp)))))
-
-(def style-wrapper (.default js/reactJss (clj->js styles)))
 
 (defonce timer (r/atom (js/Date.)))
 (defonce time-updater (js/setInterval
@@ -50,11 +28,14 @@
   []
   [:div "reddit feed here"])
 
+(defstyle org-styles
+  [:.root {:color (-> colors :bright-white :hex)}]
+  )
+
 (defn org-component
-  [classnames data]
-  (d/log data)
+  [data]
   [:div
-   {:class (gobj/get classnames "org-root")}
+   {:class (:root org-styles)}
    [:ul]
    (for [node data]
      ^{:key (:headline node)}
@@ -62,12 +43,18 @@
      )
    ])
 
+(defstyle clock-style
+  [:.root {:font-size "10px"
+           :width "450px"
+           :color (-> colors :bright-white :hex)}]
+  [:.clock {}])
+
 (defn clock
-  [classnames ascii]
+  [ascii]
   [:div
-   {:class (gobj/get classnames "clock-root")}
+   {:class (:root clock-style)}
    [:pre
-    {:class (gobj/get classnames "clock-child")}
+    {:class (:clock clock-style)}
     ascii]])
 
 (defn watcher-fn
@@ -77,7 +64,14 @@
       (when-let [resp (<! (http/post "/figlet" {:json-params {:text time-str}}))]
         (reset! ref (:body resp))))))
 
-(defn startpage*
+
+(defstyle startpage-style
+  [:.root {:color "white"
+           :display "flex"
+           :justify-content "space-around"
+           :height "100vh"}])
+
+(defn startpage
   []
   (let [ascii (r/atom "")]
     (r/create-class
@@ -86,12 +80,10 @@
                              (add-watch timer :watcher #(watcher-fn %1 %2 %3 %4 ascii)))
       :reagent-render
       (fn []
-        (let [classnames (:classes (r/props (r/current-component)))]
-          [:div {:class (gobj/get classnames "root")}
-           [org-component classnames @org]
-           [clock classnames @ascii]
-           [reddit-feed]
-           ])
-        )})))
+        [:div {:class (:root startpage-style)}
+         [org-component @org]
+         [clock @ascii]
+         [reddit-feed]
+         ])})))
 
-(def startpage (r/adapt-react-class (style-wrapper (startpage*))))
+#_(def startpage (r/adapt-react-class (style-wrapper (startpage*))))

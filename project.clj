@@ -11,7 +11,7 @@
                  [secretary "1.2.3"]
                  [org.clojure/core.async "0.3.442"]
                  [kibu/pushy "0.3.7"]
-                 [cljsjs/react-jss "5.4.0-0" :exclusions [cljsjs/react cljsjs/react-dom]]]
+                 [cljs-css-modules "0.2.1"]]
 
   :plugins [[lein-cljsbuild "1.1.6-SNAPSHOT"]]
 
