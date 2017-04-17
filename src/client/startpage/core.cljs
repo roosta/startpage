@@ -11,10 +11,12 @@
 (defonce current-page (r/atom nil))
 
 
-(defn appframe []
+(defn appframe
+  []
   [:div [@current-page]])
 
-(defroute "/" []
+(defroute "/"
+  []
   (reset! current-page startpage))
 
 (defn on-js-reload
