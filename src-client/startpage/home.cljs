@@ -13,6 +13,9 @@
                                :font-family "'Lato Thin', sans-serif"
                                :background-color (-> colors :black :hex)}}
              :root {:color "white"
+                    :display "flex"
+                    :align-items "center"
+                    :justify-content "center"
                     :height "100vh"}
 
              :clock {:font-size "10px"
@@ -24,6 +27,13 @@
 (defonce timer (r/atom (js/Date.)))
 (defonce time-updater (js/setInterval
                        #(reset! timer (js/Date.)) 1000))
+
+(defn org
+  []
+  (go
+    (let [resp (<! (http/get "/org"))]
+      (d/log (:body resp))))
+  )
 
 (defn clock
   [classnames ascii]
@@ -43,11 +53,12 @@
   (let [ascii (r/atom "")]
     (r/create-class
      {:component-did-mount (fn []
+                             (org)
                              (add-watch timer :watcher #(watcher-fn %1 %2 %3 %4 ascii)))
       :reagent-render
       (fn []
         (let [classnames (:classes (r/props (r/current-component)))]
-          [:div.row {:class (gobj/get classnames "root")}
+          [:div {:class (gobj/get classnames "root")}
            [clock classnames @ascii]])
         )})))
 
