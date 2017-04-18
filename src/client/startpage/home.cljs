@@ -58,9 +58,12 @@
       (reset! ref (:body resp)))))
 
 (defstyle clock-style
-  [:.root {:font-size (px 10)}
-   [:pre {:margin 0}]]
-  [:.clock {:width (px 450)}])
+  [:.root {:font-size (px 10)
+           :display "flex"
+           :flex-direction "column"
+           :align-items "center"}
+   [:img {:width "50%"}]]
+  )
 
 (defn clock
   []
@@ -75,16 +78,17 @@
       (fn []
         [:div
          {:class (:root clock-style)}
+         [:img {:src "/img/paxel.png"}]
          [:div {:class (:row clock-style)}
           [:pre
            {:class (:clock clock-style)}
-           @ascii]]])})))
+           @ascii]]
+         ])})))
 
 (defstyle startpage-style
   [:.root {:color (-> colors :bright-white :hex)
            :display "flex"
            :justify-content "space-around"
-           :height "100vh"
            :margin (px 30)
            }])
 
@@ -96,5 +100,5 @@
       [:div {:class (:root startpage-style)}
        [org]
        [clock]
-        [reddit]
+       [reddit]
        ])}))
