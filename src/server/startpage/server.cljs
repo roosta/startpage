@@ -41,13 +41,15 @@
 
 (defn handle-figlet
   [req res]
-  (if-let [text (.. req -body -text)]
-    (figlet text (:figlet-font config) (fn [err text]
-                                         (when err
-                                           (.log js/console "something went wrong")
-                                           (.dir js/console err))
-                                         (.send res (string/trimr text))))
-    (.sendStatus res 400)))
+  (let [text (.. req -body -text)
+        font (.. req -body -font)]
+    (if (not (and (nil? text) (nil? font)))
+      (figlet text font (fn [err text]
+                          (when err
+                            (.log js/console "something went wrong")
+                            (.dir js/console err))
+                          (.send res (string/trimr text))))
+      (.sendStatus res 400))))
 
 ;; routes get redefined on each reload
 (.get app "/" handle-request)

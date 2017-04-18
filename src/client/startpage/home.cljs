@@ -28,8 +28,12 @@
 
 (defstyle org-styles
   [:.root {}
-   [:ul {:padding-left (px 20)
+   [:ul {:padding-left (px 15)
          :margin 0}]]
+  [:.header
+   {:font-size (px 10)
+    :margin-bottom (px 10)}
+   ]
   )
 
 (defn org
@@ -37,7 +41,13 @@
   (let [org-data (r/atom [])
         org-updater (js/setInterval
                      #(get-org! org-data)
-                     300000)]
+                     300000)
+        header-text (r/atom "Todo list")
+        _ (go
+            (let [resp (<! (http/post "/figlet" {:json-params {:text "Todo list:"
+                                                               :font "Standard"}}))]
+              (reset! header-text (:body resp))))
+        ]
     (r/create-class
      {:component-will-mount #(get-org! org-data)
       :component-will-unmount #(js/clearInterval org-updater)
@@ -45,6 +55,8 @@
       (fn []
         [:div
          {:class (:root org-styles)}
+         [:pre {:class (:header org-styles)}
+          @header-text]
          [:ul
           (for [node @org-data]
             ^{:key (:headline node)}
@@ -54,7 +66,8 @@
   [ref]
   (go
     (let [time-str (-> (js/Date.) .toTimeString (clojure.string/split " ") first)
-          resp (<! (http/post "/figlet" {:json-params {:text time-str}}))]
+          resp (<! (http/post "/figlet" {:json-params {:text time-str
+                                                       :font "DOS Rebel"}}))]
       (reset! ref (:body resp)))))
 
 (defstyle clock-style
