@@ -10,9 +10,15 @@
    [cljs-css-modules.macro :refer-macros [defstyle]]
    [reagent.debug :as d]))
 
-(defn reddit-feed
+
+(defstyle reddit-style
+  [:.root {:margin 0}])
+
+(defn reddit
   []
-  [:div "reddit feed here"])
+  [:div
+   {:class (:root reddit-style)}
+   "reddit feed here"])
 
 (defn get-org!
   [ref]
@@ -21,7 +27,9 @@
       (reset! ref (:body resp)))))
 
 (defstyle org-styles
-  [:.root {:color (-> colors :bright-white :hex)}]
+  [:.root {}
+   [:ul {:padding-left (px 20)
+         :margin 0}]]
   )
 
 (defn org
@@ -37,10 +45,10 @@
       (fn []
         [:div
          {:class (:root org-styles)}
-         [:ul]
-         (for [node @org-data]
-           ^{:key (:headline node)}
-           [:li (:headline node)])])})))
+         [:ul
+          (for [node @org-data]
+            ^{:key (:headline node)}
+            [:li (:headline node)])]])})))
 
 (defn get-figlet!
   [ref]
@@ -50,10 +58,8 @@
       (reset! ref (:body resp)))))
 
 (defstyle clock-style
-  [:.root {:font-size (px 10)
-           :display "flex"
-           :justify-content "center"
-           :color (-> colors :bright-white :hex)}]
+  [:.root {:font-size (px 10)}
+   [:pre {:margin 0}]]
   [:.clock {:width (px 450)}])
 
 (defn clock
@@ -75,14 +81,12 @@
            @ascii]]])})))
 
 (defstyle startpage-style
-  [:.root {:color "white"
-           ;; :display "flex"
-           ;; :justify-content "space-around"
-           :padding-left (px 50)
-           :padding-right (px 50)
-           }]
-  [:.row {:display "flex"
-          :justify-content "space-between"}])
+  [:.root {:color (-> colors :bright-white :hex)
+           :display "flex"
+           :justify-content "space-around"
+           :height "100vh"
+           :margin (px 30)
+           }])
 
 (defn startpage
   []
@@ -90,9 +94,7 @@
    {:reagent-render
     (fn []
       [:div {:class (:root startpage-style)}
+       [org]
        [clock]
-       [:div
-        {:class (:row startpage-style)}
-        [org]
-        [reddit-feed]]
+        [reddit]
        ])}))
