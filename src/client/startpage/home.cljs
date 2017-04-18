@@ -28,7 +28,7 @@
 
 (defstyle org-styles
   [:.root {}
-   [:ul {:padding-left (px 15)
+   [:ul {
          :margin 0}]]
   [:.header
    {:font-size (px 10)
