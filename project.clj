@@ -11,6 +11,7 @@
                  [secretary "1.2.3"]
                  [org.clojure/core.async "0.3.442"]
                  [kibu/pushy "0.3.7"]
+                 [cljs-node-io "0.5.0"]
                  [cljs-css-modules "0.2.1"]]
 
   :plugins [[lein-cljsbuild "1.1.6-SNAPSHOT"]]
