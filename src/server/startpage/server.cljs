@@ -22,6 +22,9 @@
 (defonce path (nodejs/require "path"))
 (defonce colors (nodejs/require "colors"))
 (defonce feedparser (nodejs/require "feedparser"))
+(defonce cp (nodejs/require "child_process"))
+
+;; (.exec cp "ls" #(d/log %2))
 
 ;; app gets redefined on reload
 (def app (express))
@@ -51,11 +54,24 @@
                           (.send res (string/trimr text))))
       (.sendStatus res 400))))
 
+(defn handle-emacs
+  [req res]
+  (if-let [linenr (gobj/getValueByKeys req "params" "linenr")]
+    (.exec cp
+           (str "emacsclient -n +" linenr " " (:todo-file config))
+           #(if (not (nil? %1))
+              (do
+                (.sendStatus res 400)
+                (.send res %1))
+              (.sendStatus res 200)))
+    (.sendStatus res 400)))
+
 ;; routes get redefined on each reload
 (.get app "/" handle-request)
 (.get app "/org" handle-org)
 (.post app "/figlet/" json-parser handle-figlet)
 (.use app (serve-static "resources/public"))
+(.get app "/org/open/:linenr" handle-emacs)
 
 (def -main
   (fn []
