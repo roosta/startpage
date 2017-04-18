@@ -11,7 +11,6 @@
                  [secretary "1.2.3"]
                  [org.clojure/core.async "0.3.442"]
                  [kibu/pushy "0.3.7"]
-                 [cljs-node-io "0.5.0"]
                  [cljs-css-modules "0.2.1"]]
 
   :plugins [[lein-cljsbuild "1.1.6-SNAPSHOT"]]
@@ -24,7 +23,28 @@
 
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
-  :cljsbuild {:builds {:app-min {:source-paths ["src/client"]
-                                 :compiler {:output-to "resources/public/js/app.js"
-                                            :output-dir "resources/public/js"
-                                            :optimizations :advanced}}}})
+  :figwheel {:open-file-command "emacs-file-opener"
+             :css-dirs ["resources/public/css"]
+             :server-logfile "log/fighweel-server.log"}
+
+  :cljsbuild {:builds [{:id "app"
+                   :figwheel {:on-jsload "startpage.core/on-js-reload"}
+                   :source-paths ["src/client"]
+                   :compiler {:main startpage.core
+                              :asset-path "/js/out"
+                              :output-to "resources/public/js/app.js"
+                              :output-dir "resources/public/js/out"
+                              :optimizations :none
+                              :preloads [devtools.preload]
+                              :source-map true}}
+
+                  {:id "server"
+                   :figwheel true
+                   :source-paths ["src/server"]
+                   :compiler {:main startpage.server
+                              :output-to "resources/public/js/server.js"
+                              :output-dir "resources/public/js/server-side"
+                              :target :nodejs
+                              :preloads [devtools.preload]
+                              :optimizations :none
+                              :source-map true}}]})
