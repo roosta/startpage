@@ -1,7 +1,13 @@
 (ns startpage.server
   (:require [cljs.nodejs :as nodejs]
             [startpage.handler :as handler]
-            [figwheel.client :as fw]))
+            [cljs.core.async :refer [put! alts! chan <! >! timeout close!]]
+            [clojure.string :as string]
+            [goog.object :as gobj]
+            [cljs.reader :refer [read-string]]
+            [figwheel.client :as fw]
+            [reagent.debug :as d])
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (nodejs/enable-util-print!)
 
@@ -12,6 +18,10 @@
 (defonce org (nodejs/require "org-mode-parser"))
 (defonce http (nodejs/require "http"))
 (defonce json-parser (.json body-parser))
+(defonce fs (nodejs/require "fs"))
+(defonce path (nodejs/require "path"))
+(defonce colors (nodejs/require "colors"))
+(defonce feedparser (nodejs/require "feedparser"))
 
 ;; app gets redefined on reload
 (def app (express))
@@ -19,9 +29,12 @@
 (defn handle-request [req res]
   (.send res (handler/render-page (.-path req))))
 
+(def config (-> (.readFileSync fs "config.edn" "utf8")
+                read-string))
+
 (defn handle-org
   [req res]
-  (if-let [node-list (.makelist org "TODOs.org"
+  (if-let [node-list (.makelist org (:todo-file config)
                              (fn [node-list]
                                (.send res node-list)))]
     (.sendStatus res 400)))
@@ -29,11 +42,11 @@
 (defn handle-figlet
   [req res]
   (if-let [text (.. req -body -text)]
-    (figlet text "DOS Rebel" (fn [err text]
-                             (when err
-                               (.log js/console "something went wrong")
-                               (.dir js/console err))
-                             (.send res text)))
+    (figlet text (:figlet-font config) (fn [err text]
+                                         (when err
+                                           (.log js/console "something went wrong")
+                                           (.dir js/console err))
+                                         (.send res (string/trimr text))))
     (.sendStatus res 400)))
 
 ;; routes get redefined on each reload

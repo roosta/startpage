@@ -1,5 +1,4 @@
 (ns startpage.home
-  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
    [cljs.core.async :refer [put! alts! chan <! >! timeout close!]]
    [goog.object :as gobj]
@@ -8,7 +7,8 @@
    [garden.units :as u :refer [px pt pc]]
    [reagent.core :as r]
    [cljs-css-modules.macro :refer-macros [defstyle]]
-   [reagent.debug :as d]))
+   [reagent.debug :as d])
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 
 (defstyle reddit-style
@@ -62,8 +62,9 @@
            :display "flex"
            :flex-direction "column"
            :align-items "center"}
-   [:img {:width "50%"}]]
-  )
+   [:pre {:margin 0}]
+   [:img {:width "50%"
+          :margin-bottom (px 20)}]])
 
 (defn clock
   []
@@ -88,6 +89,7 @@
 (defstyle startpage-style
   [:.root {:color (-> colors :bright-white :hex)
            :display "flex"
+           :align-items "flex-end"
            :justify-content "space-around"
            :margin (px 30)
            }])
