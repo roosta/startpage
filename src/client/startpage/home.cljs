@@ -5,11 +5,10 @@
    [goog.object :as gobj]
    [startpage.srcery :refer [colors]]
    [cljs-http.client :as http]
+   [garden.units :as u :refer [px pt pc]]
    [reagent.core :as r]
    [cljs-css-modules.macro :refer-macros [defstyle]]
    [reagent.debug :as d]))
-
-;; (defonce org (r/atom []))
 
 (defn reddit-feed
   []
@@ -43,18 +42,19 @@
            ^{:key (:headline node)}
            [:li (:headline node)])])})))
 
-(defstyle clock-style
-  [:.root {:font-size "10px"
-           :width "450px"
-           :color (-> colors :bright-white :hex)}]
-  [:.clock {}])
-
 (defn get-figlet!
   [ref]
   (go
     (let [time-str (-> (js/Date.) .toTimeString (clojure.string/split " ") first)
           resp (<! (http/post "/figlet" {:json-params {:text time-str}}))]
       (reset! ref (:body resp)))))
+
+(defstyle clock-style
+  [:.root {:font-size (px 10)
+           :display "flex"
+           :justify-content "center"
+           :color (-> colors :bright-white :hex)}]
+  [:.clock {:width (px 450)}])
 
 (defn clock
   []
@@ -69,15 +69,20 @@
       (fn []
         [:div
          {:class (:root clock-style)}
-         [:pre
-          {:class (:clock clock-style)}
-          @ascii]])})))
+         [:div {:class (:row clock-style)}
+          [:pre
+           {:class (:clock clock-style)}
+           @ascii]]])})))
 
 (defstyle startpage-style
   [:.root {:color "white"
-           :display "flex"
-           :justify-content "space-around"
-           :height "100vh"}])
+           ;; :display "flex"
+           ;; :justify-content "space-around"
+           :padding-left (px 50)
+           :padding-right (px 50)
+           }]
+  [:.row {:display "flex"
+          :justify-content "space-between"}])
 
 (defn startpage
   []
@@ -85,7 +90,9 @@
    {:reagent-render
     (fn []
       [:div {:class (:root startpage-style)}
-       [org]
        [clock]
-       [reddit-feed]
+       [:div
+        {:class (:row startpage-style)}
+        [org]
+        [reddit-feed]]
        ])}))
