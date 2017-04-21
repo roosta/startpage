@@ -1,3 +1,3 @@
 (use 'figwheel-sidecar.repl-api)
-(start-figwheel! "server" "app") ;; <-- fetches configuration
+(start-figwheel! "server" "client") ;; <-- fetches configuration
 (cljs-repl)

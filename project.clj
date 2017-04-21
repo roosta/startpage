@@ -27,13 +27,13 @@
              :css-dirs ["resources/public/css"]
              :server-logfile "log/fighweel-server.log"}
 
-  :cljsbuild {:builds [{:id "app"
+  :cljsbuild {:builds [{:id "client"
                    :figwheel {:on-jsload "startpage.core/on-js-reload"}
                    :source-paths ["src/client"]
                    :compiler {:main startpage.core
-                              :asset-path "/js/out"
-                              :output-to "resources/public/js/app.js"
-                              :output-dir "resources/public/js/out"
+                              :asset-path "/js/client"
+                              :output-to "resources/public/js/client/client.js"
+                              :output-dir "resources/public/js/client"
                               :optimizations :none
                               :preloads [devtools.preload]
                               :source-map true}}
@@ -41,8 +41,8 @@
                   {:id "server"
                    :source-paths ["src/server"]
                    :compiler {:main startpage.server
-                              :output-to "resources/public/js/server.js"
-                              :output-dir "resources/public/js/server-side"
+                              :output-to "resources/public/js/server/server.js"
+                              :output-dir "resources/public/js/server"
                               :target :nodejs
                               :optimizations :none
                               :source-map true}}]})
