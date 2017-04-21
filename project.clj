@@ -23,7 +23,7 @@
 
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
-  :figwheel {:open-file-command "emacs-file-opener"
+  :figwheel {:open-file-command "script/emacs-file-opener.sh"
              :css-dirs ["resources/public/css"]
              :server-logfile "log/fighweel-server.log"}
 
@@ -39,12 +39,10 @@
                               :source-map true}}
 
                   {:id "server"
-                   :figwheel true
                    :source-paths ["src/server"]
                    :compiler {:main startpage.server
                               :output-to "resources/public/js/server.js"
                               :output-dir "resources/public/js/server-side"
                               :target :nodejs
-                              :preloads [devtools.preload]
                               :optimizations :none
                               :source-map true}}]})
