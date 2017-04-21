@@ -36,17 +36,17 @@
   [:.root {}
    [:ul {:margin 0
          :font-size "14px"}]
-   [:li {:cursor "pointer"}]]
+   [:li {:cursor "pointer"
+         :transition "background 100ms ease-in-out"}
+    [:&:hover {:background (-> colors :bright-black :hex)}]]]
   [:.header
    {:font-size (px 10)
     :margin-bottom (px 10)}]
-  [:.node {:font-weight "bold"
-           ;; :color (-> colors :black :hex)
-           :margin-right "6px"}]
   [:.done {:color (-> colors :green :hex)}]
   [:.todo {:color (-> colors :yellow :hex)}]
   [:.someday {:color (-> colors :white :hex)}]
-  )
+  [:.todo-node {:font-weight "bold"
+           :margin-right "6px"}])
 
 (defn org
   []
@@ -78,12 +78,11 @@
                [:li
                 {:on-click #(http/post "/org/open" {:json-params {:search-str (:headline node)}})}
                 [:span {:class (condp = (:todo node)
-                                 "DONE" (join-classes org-styles :node :done)
-                                 "TODO" (join-classes org-styles :node :todo)
-                                 "SOMEDAY" (join-classes org-styles :node :someday)
-                                 "MAYBE" (join-classes org-styles :node :someday)
-                                 (:node org-styles))
-                        }
+                                 "DONE" (join-classes org-styles :todo-node :done)
+                                 "TODO" (join-classes org-styles :todo-node :todo)
+                                 "SOMEDAY" (join-classes org-styles :todo-node :someday)
+                                 "MAYBE" (join-classes org-styles :todo-node :someday)
+                                 (:todo-node org-styles))}
                  (:todo node)]
                 [:span (:headline node)]]))
            @org-data)]])})))
