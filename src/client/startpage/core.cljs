@@ -2,6 +2,7 @@
   (:import goog.History)
   (:require [reagent.core :as r]
             [reagent.debug :as d]
+            [figwheel.client :as fw]
             [pushy.core :as pushy]
             [cljs-css-modules.macro :refer-macros [defstyle]]
             [startpage.home :refer [startpage]]
@@ -35,6 +36,7 @@
 
 (defn init!
   []
+
   (reset! current-page startpage)
   (secretary/set-config! :prefix "/")
   (pushy/push-state! secretary/dispatch!

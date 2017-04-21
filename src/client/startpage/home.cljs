@@ -29,7 +29,8 @@
 (defstyle org-styles
   [:.root {}
    [:ul {
-         :margin 0}]]
+         :margin 0}]
+   [:li {:cursor "pointer"}]]
   [:.header
    {:font-size (px 10)
     :margin-bottom (px 10)}
@@ -58,9 +59,13 @@
          [:pre {:class (:header org-styles)}
           @header-text]
          [:ul
-          (for [node @org-data]
-            ^{:key (:headline node)}
-            [:li (:headline node)])]])})))
+          (map-indexed
+           (fn [idx node]
+             ^{:key (:key node)}
+             [:li
+              {:on-click #(http/post "/org/open" {:json-params {:search-str (:headline node)}})}
+              (:headline node)])
+           @org-data)]])})))
 
 (defn get-figlet!
   [ref]
@@ -115,5 +120,4 @@
       [:div {:class (:root startpage-style)}
        [org]
        [clock]
-       [reddit]
-       ])}))
+       [reddit]])}))
