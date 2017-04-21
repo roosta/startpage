@@ -20,11 +20,8 @@
 (defonce json-parser (.json body-parser))
 (defonce fs (nodejs/require "fs"))
 (defonce path (nodejs/require "path"))
-(defonce colors (nodejs/require "colors"))
-(defonce feedparser (nodejs/require "feedparser"))
-(defonce cp (nodejs/require "child_process"))
-
-;; (.exec cp "ls" #(d/log %2))
+(defonce chalk (nodejs/require "chalk"))
+(defonce child-process (nodejs/require "child_process"))
 
 ;; app gets redefined on reload
 (def app (express))
@@ -44,8 +41,8 @@
 
 (defn handle-figlet
   [req res]
-  (let [text (.. req -body -text)
-        font (.. req -body -font)]
+  (let [text (gobj/getValueByKeys req "body" "text")
+        font (gobj/getValueByKeys req "body" "font")]
     (if (not (and (nil? text) (nil? font)))
       (figlet text font (fn [err text]
                           (when err
@@ -56,22 +53,24 @@
 
 (defn handle-emacs
   [req res]
-  (if-let [linenr (gobj/getValueByKeys req "params" "linenr")]
-    (.exec cp
-           (str "emacsclient -n +" linenr " " (:todo-file config))
-           #(if (not (nil? %1))
-              (do
-                (.sendStatus res 400)
-                (.send res %1))
-              (.sendStatus res 200)))
-    (.sendStatus res 400)))
+  (let [search-str (gobj/getValueByKeys req "body" "search-str")]
+    (.exec child-process
+           (str "grep -n \"" search-str "\" " (:todo-file config))
+           (fn [_ stdout _]
+             (let [line-nr (first (clojure.string/split stdout #":"))]
+               (.exec child-process
+                      (str "emacsclient -n +" line-nr " " (:todo-file config))
+                      (fn [err _ _]
+                        (if err
+                          (.sendStatus res 400)
+                          (.sendStatus res 200)))))))))
 
 ;; routes get redefined on each reload
 (.get app "/" handle-request)
 (.get app "/org" handle-org)
 (.post app "/figlet/" json-parser handle-figlet)
 (.use app (serve-static "resources/public"))
-(.get app "/org/open/:linenr" handle-emacs)
+(.post app "/org/open/" json-parser handle-emacs)
 
 (def -main
   (fn []
