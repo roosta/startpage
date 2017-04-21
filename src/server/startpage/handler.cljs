@@ -15,7 +15,7 @@
     [:link {:href "https://fonts.googleapis.com/css?family=Inconsolata" :rel "stylesheet"}]]
    [:body
     [:div#app]
-    [:script {:type "text/javascript" :src "js/client/client.js"}]]])
+    [:script {:type "text/javascript" :src "js/client.js"}]]])
 
 (defn ^:export render-page [path]
   (rs/render-to-static-markup (do (secretary/dispatch! path)
