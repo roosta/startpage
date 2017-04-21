@@ -26,15 +26,26 @@
     (let [resp (<! (http/get "/org"))]
       (reset! ref (:body resp)))))
 
+(defn join-classes
+  [styles & classes]
+  (->> (select-keys styles classes)
+       vals
+       (clojure.string/join " ")))
+
 (defstyle org-styles
   [:.root {}
-   [:ul {
-         :margin 0}]
+   [:ul {:margin 0
+         :font-size "14px"}]
    [:li {:cursor "pointer"}]]
   [:.header
    {:font-size (px 10)
-    :margin-bottom (px 10)}
-   ]
+    :margin-bottom (px 10)}]
+  [:.node {:font-weight "bold"
+           ;; :color (-> colors :black :hex)
+           :margin-right "6px"}]
+  [:.done {:color (-> colors :green :hex)}]
+  [:.todo {:color (-> colors :yellow :hex)}]
+  [:.someday {:color (-> colors :white :hex)}]
   )
 
 (defn org
@@ -42,18 +53,19 @@
   (let [org-data (r/atom [])
         org-updater (js/setInterval
                      #(get-org! org-data)
-                     300000)
+                     60000)
         header-text (r/atom "Todo list")
         _ (go
             (let [resp (<! (http/post "/figlet" {:json-params {:text "Todo list:"
                                                                :font "Standard"}}))]
-              (reset! header-text (:body resp))))
-        ]
+              (reset! header-text (:body resp))))]
+
     (r/create-class
      {:component-will-mount #(get-org! org-data)
       :component-will-unmount #(js/clearInterval org-updater)
       :reagent-render
       (fn []
+        (d/log @org-data)
         [:div
          {:class (:root org-styles)}
          [:pre {:class (:header org-styles)}
@@ -62,9 +74,18 @@
           (map-indexed
            (fn [idx node]
              ^{:key (:key node)}
-             [:li
-              {:on-click #(http/post "/org/open" {:json-params {:search-str (:headline node)}})}
-              (:headline node)])
+             (when (= (:level node) 1)
+               [:li
+                {:on-click #(http/post "/org/open" {:json-params {:search-str (:headline node)}})}
+                [:span {:class (condp = (:todo node)
+                                 "DONE" (join-classes org-styles :node :done)
+                                 "TODO" (join-classes org-styles :node :todo)
+                                 "SOMEDAY" (join-classes org-styles :node :someday)
+                                 "MAYBE" (join-classes org-styles :node :someday)
+                                 (:node org-styles))
+                        }
+                 (:todo node)]
+                [:span (:headline node)]]))
            @org-data)]])})))
 
 (defn get-figlet!
