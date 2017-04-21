@@ -30,9 +30,10 @@
 
   :cljsbuild {:builds [{:id "client"
                         :source-paths ["src/client"]
+                        :figwheel true
                         :compiler {:main startpage.core
                                    :asset-path "/js/client"
-                                   :output-to "resources/public/js/client/client.js"
+                                   :output-to "resources/public/js/client.js"
                                    :output-dir "resources/public/js/client"
                                    :optimizations :none
                                    :preloads [devtools.preload]
@@ -41,8 +42,8 @@
                        {:id "server"
                         :source-paths ["src/server"]
                         :compiler {:main startpage.server
-                                   :output-to "resources/public/js/server/server.js"
-                                   :output-dir "resources/public/js/server"
+                                   :output-to "target/cljsbuild/server.js"
+                                   :output-dir "target/cljsbuild/server"
                                    :target :nodejs
                                    :optimizations :none
                                    :source-map true}}]})
