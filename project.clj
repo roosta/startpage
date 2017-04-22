@@ -24,9 +24,13 @@
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
   :figwheel {:open-file-command "script/emacs-file-opener.sh"
-
              :css-dirs ["resources/public/css"]
              :server-logfile "log/fighweel-server.log"}
+
+  :aliases {"min"
+            ["do"
+             ["clean"]
+             ["cljsbuild" "once" "server" "client-min"]]}
 
   :cljsbuild {:builds [{:id "client"
                         :source-paths ["src/client"]
@@ -42,8 +46,17 @@
                        {:id "server"
                         :source-paths ["src/server"]
                         :compiler {:main startpage.server
-                                   :output-to "target/cljsbuild/server.js"
-                                   :output-dir "target/cljsbuild/server"
+                                   :output-to "resources/public/js/server.js"
+                                   :output-dir "resources/public/js/server"
                                    :target :nodejs
                                    :optimizations :none
-                                   :source-map true}}]})
+                                   :source-map true}}
+
+                       {:id "client-min"
+                        :source-paths ["src/client"]
+                        :compiler {:main startpage.core
+                                   :asset-path "/js/client"
+                                   :closure-defines {"goog.DEBUG" false}
+                                   :output-to "resources/public/js/client.js"
+                                   :pretty-print false
+                                   :optimizations :advanced}}]})
