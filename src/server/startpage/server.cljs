@@ -8,6 +8,7 @@
             [reagent.debug :as d]))
 
 (nodejs/enable-util-print!)
+(defonce chalk (nodejs/require "chalk"))
 
 (defonce express (nodejs/require "express"))
 (defonce serve-static (nodejs/require "serve-static"))
@@ -18,8 +19,9 @@
 (defonce json-parser (.json body-parser))
 (defonce fs (nodejs/require "fs"))
 (defonce path (nodejs/require "path"))
-(defonce chalk (nodejs/require "chalk"))
 (defonce child-process (nodejs/require "child_process"))
+
+;; had issues using cljs-http so fell back to request
 (defonce request (nodejs/require "request"))
 
 ;; app gets redefined on reload
