@@ -65,7 +65,6 @@
       :component-will-unmount #(js/clearInterval org-updater)
       :reagent-render
       (fn []
-        (d/log @org-data)
         [:div
          {:class (:root org-styles)}
          [:pre {:class (:header org-styles)}
@@ -73,10 +72,10 @@
          [:ul
           (map-indexed
            (fn [idx node]
-             ^{:key (:key node)}
              (when (= (:level node) 1)
                [:li
-                {:on-click #(http/post "/org/open" {:json-params {:search-str (:headline node)}})}
+                {:key (:key node)
+                 :on-click #(http/post "/org/open" {:json-params {:search-str (:headline node)}})}
                 [:span {:class (condp = (:todo node)
                                  "DONE" (join-classes org-styles :todo-node :done)
                                  "TODO" (join-classes org-styles :todo-node :todo)
