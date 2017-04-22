@@ -1,13 +1,11 @@
 (ns startpage.server
   (:require [cljs.nodejs :as nodejs]
             [startpage.handler :as handler]
-            [cljs.core.async :refer [put! alts! chan <! >! timeout close!]]
             [clojure.string :as string]
             [goog.object :as gobj]
             [cljs.reader :refer [read-string]]
             [figwheel.client :as fw]
-            [reagent.debug :as d])
-  (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
+            [reagent.debug :as d]))
 
 (nodejs/enable-util-print!)
 
@@ -22,17 +20,21 @@
 (defonce path (nodejs/require "path"))
 (defonce chalk (nodejs/require "chalk"))
 (defonce child-process (nodejs/require "child_process"))
+(defonce request (nodejs/require "request"))
 
 ;; app gets redefined on reload
 (def app (express))
 
-(defn handle-request [req res]
+(defn handle-page-render
+  "handle page render"
+  [req res]
   (.send res (handler/render-page (.-path req))))
 
 (def config (-> (.readFileSync fs "config.edn" "utf8")
                 read-string))
 
 (defn handle-org
+  "return parsed org content"
   [req res]
   (if-let [node-list (.makelist org (:todo-file config)
                              (fn [node-list]
@@ -40,6 +42,8 @@
     (.sendStatus res 400)))
 
 (defn handle-figlet
+  "send a figlet rendered font based on post params for font and text
+  ie: {:json-params {:text \"text here\" :font \"figlet font\"}}"
   [req res]
   (let [text (gobj/getValueByKeys req "body" "text")
         font (gobj/getValueByKeys req "body" "font")]
@@ -52,6 +56,10 @@
       (.sendStatus res 400))))
 
 (defn handle-emacs
+  "open emacs at item line number by matching headline json param using grep
+  Use child_process to call shell commands grep and emacsclient
+  This function is hugely insecure, no sanitizing input and not tested for robustness
+  USE AT OWN RISK"
   [req res]
   (let [search-str (gobj/getValueByKeys req "body" "search-str")]
     (.exec child-process
@@ -65,9 +73,18 @@
                           (.sendStatus res 400)
                           (.sendStatus res 200)))))))))
 
+(defn handle-reddit
+  [req res]
+  (let [opts (clj->js {:url (:reddit-feed-url config)
+                       :headers {"User-Agent" "linux:sh.roosha.sh:v0.0.1 (by /u/zem_mattress)"}})]
+    (request opts (fn [error resp body]
+                    (.send res body)))))
+
+;; ----- ROUTES -----
 ;; routes get redefined on each reload
-(.get app "/" handle-request)
+(.get app "/" handle-page-render)
 (.get app "/org" handle-org)
+(.get app "/reddit" handle-reddit)
 (.post app "/figlet/" json-parser handle-figlet)
 (.use app (serve-static "resources/public"))
 (.post app "/org/open/" json-parser handle-emacs)
