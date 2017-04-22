@@ -26,7 +26,13 @@
            :max-width "33.333333333%"}
    [:ul {:list-style-type "square"
          :padding 0
-         :font-size "14px"}]]
+         :font-size "14px"}
+    [:li {}
+     [:&:hover {:background (-> colors :bright-black :hex)
+                :font-weight "bold"}]]]
+   [:a {:text-decoration "none"
+        :color (-> colors :bright-white :hex)}
+    [:&:visited {:color (-> colors :white :hex)}]]]
   [:.header
    {:font-size "10px"
     :margin-left "-8px"}]
@@ -57,9 +63,11 @@
           (for [node @reddit-data]
             ^{:key (gobj/getValueByKeys node "data" "id")}
             (let [title (truncate-string (gobj/getValueByKeys node "data" "title") 50)
-                  id (gobj/getValueByKeys node "data" "id")]
+                  id (gobj/getValueByKeys node "data" "id")
+                  perma-link (gobj/getValueByKeys node "data" "permalink")]
               [:li {:key id}
-               title]))]])})))
+               [:a {:href (str "https://reddit.com" perma-link) :target "_blank"}
+                title]]))]])})))
 
 (defn get-org!
   [ref]
@@ -77,9 +85,9 @@
          :padding 0
          :list-style-type "square"
          :list-style-position "outside"}]
-   [:li {:cursor "pointer"
-         :transition "background 100ms ease-in-out"}
-    [:&:hover {:background (-> colors :bright-black :hex)}]]]
+   [:li {:cursor "pointer"}
+    [:&:hover {:background (-> colors :bright-black :hex)
+               :font-weight "bold"}]]]
   [:.header
    {:font-size (px 10)
     }]
