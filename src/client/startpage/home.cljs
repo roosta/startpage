@@ -179,9 +179,10 @@
   [:.root {:color (-> colors :bright-white :hex)
            :display "flex"
            :align-items "center"
-           :height "100vh"
+           :height "100%"
            :justify-content "space-between"
-           :margin (px 30)
+           :margin-left (px 30)
+           :margin-right (px 30)
            }])
 
 (defn startpage
