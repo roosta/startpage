@@ -7,8 +7,10 @@
             [figwheel.client :as fw]
             [reagent.debug :as d]))
 
-(nodejs/enable-util-print!)
-(defonce chalk (nodejs/require "chalk"))
+(goog-define DEBUG true)
+(when DEBUG
+  (nodejs/enable-util-print!)
+  (defonce chalk (nodejs/require "chalk")))
 
 (defonce express (nodejs/require "express"))
 (defonce serve-static (nodejs/require "serve-static"))
@@ -18,7 +20,6 @@
 (defonce http (nodejs/require "http"))
 (defonce json-parser (.json body-parser))
 (defonce fs (nodejs/require "fs"))
-(defonce path (nodejs/require "path"))
 (defonce child-process (nodejs/require "child_process"))
 
 ;; had issues using cljs-http so fell back to request
@@ -102,4 +103,5 @@
 
 (set! *main-cli-fn* -main)
 
-(fw/start {:build-id "server"})
+(when DEBUG
+  (fw/start {:build-id "server"}))

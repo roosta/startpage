@@ -30,7 +30,7 @@
   :aliases {"min"
             ["do"
              ["clean"]
-             ["cljsbuild" "once" "server" "client-min"]]}
+             ["cljsbuild" "once" "server-min" "client-min"]]}
 
   :cljsbuild {:builds [{:id "client"
                         :source-paths ["src/client"]
@@ -43,20 +43,29 @@
                                    :preloads [devtools.preload]
                                    :source-map true}}
 
-                       {:id "server"
-                        :source-paths ["src/server"]
-                        :compiler {:main startpage.server
-                                   :output-to "resources/public/js/server.js"
-                                   :output-dir "resources/public/js/server"
-                                   :target :nodejs
-                                   :optimizations :none
-                                   :source-map true}}
 
                        {:id "client-min"
                         :source-paths ["src/client"]
                         :compiler {:main startpage.core
-                                   :asset-path "/js/client"
-                                   :closure-defines {"goog.DEBUG" false}
                                    :output-to "resources/public/js/client.js"
                                    :pretty-print false
-                                   :optimizations :advanced}}]})
+                                   :optimizations :advanced}}
+
+                       {:id "server"
+                        :source-paths ["src/server"]
+                        :compiler {:main startpage.server
+                                   :output-to "target/dev/server.js"
+                                   :output-dir "target/dev/server"
+                                   :target :nodejs
+                                   :optimizations :none
+                                   :source-map true}}
+
+                       {:id "server-min"
+                        :source-paths ["src/server"]
+                        :compiler {:main startpage.server
+                                   :output-to "target/prod/server.js"
+                                   :output-dir "target/prod/server"
+                                   :closure-defines {startpage.server/DEBUG false}
+                                   :target :nodejs
+                                   :optimizations :none
+                                   :source-map false}}]})

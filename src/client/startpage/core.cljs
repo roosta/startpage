@@ -9,7 +9,9 @@
             [startpage.srcery :refer [colors]]
             [secretary.core :as secretary :refer-macros [defroute]]))
 
-(enable-console-print!)
+(goog-define DEBUG true)
+(when goog.DEBUG
+  (enable-console-print!))
 
 (defonce current-page (r/atom nil))
 
