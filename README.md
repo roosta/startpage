@@ -9,6 +9,7 @@ Currently expects an emacs server to be running one way or another. (why wouldn'
 Requires:
 * [Leiningen](https://github.com/technomancy/leiningen)
 * [Node](https://nodejs.org/en/)
+* [npm](https://www.npmjs.com/)
 
 ```shell
 $ git clone https://github.com/roosta/startpage
