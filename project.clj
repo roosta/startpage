@@ -43,7 +43,6 @@
                                    :preloads [devtools.preload]
                                    :source-map true}}
 
-
                        {:id "client-min"
                         :source-paths ["src/client"]
                         :compiler {:main startpage.core
@@ -66,6 +65,17 @@
                                    :output-to "target/prod/server.js"
                                    :output-dir "target/prod/server"
                                    :closure-defines {startpage.server/DEBUG false}
+                                   :target :nodejs
+                                   :optimizations :none
+                                   :source-map false}}
+
+                       {:id "server-demo"
+                        :source-paths ["src/server"]
+                        :compiler {:main startpage.server
+                                   :output-to "target/demo/server.js"
+                                   :output-dir "target/demo/server"
+                                   :closure-defines {startpage.server/DEBUG false
+                                                     startpage.server/config-location "config.example.edn"}
                                    :target :nodejs
                                    :optimizations :none
                                    :source-map false}}]})

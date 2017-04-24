@@ -1,0 +1,21 @@
+#+SEQ_TODO: NEXT(t) TODO(t) WAITING(w) MAYBE(m) | DONE(d) CANCELLED(c)
+* TODO Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+* TODO Nunc sit amet mauris venenatis, ultrices leo eget, maximus velit.
+* DONE Mauris pharetra neque quis sagittis maximus.
+* TODO Ut luctus ante sed lorem pellentesque, nec accumsan urna tincidunt.
+* TODO Quisque maximus nulla in tempor pretium.
+* MAYBE Mauris ultrices leo eget lacus efficitur, volutpat venenatis sem sollicitudin.
+* TODO Aliquam mattis leo sit amet mi molestie, id varius sem viverra.
+* TODO Donec sed nunc scelerisque, scelerisque urna ac, aliquam leo.
+* TODO Pellentesque mollis enim at bibendum porttitor.
+* WAITING Mauris vel est in augue dapibus mattis.
+* TODO Praesent interdum tellus id urna dapibus consequat.
+* TODO Cras sed arcu a elit venenatis hendrerit vel eget dui.
+* TODO Sed aliquam ex vitae orci maximus malesuada.
+* TODO Aliquam sed ipsum ut risus fermentum congue ac condimentum augue.
+* TODO Sed volutpat augue vitae erat sollicitudin, at faucibus orci luctus.
+* TODO Aliquam posuere lectus tincidunt, sollicitudin sapien quis, blandit enim.
+* TODO Mauris id mauris sed eros fermentum scelerisque.
+* DONE Maecenas id tellus consequat turpis ornare vehicula a id justo.
+* TODO Aliquam ac felis molestie, porttitor tellus non, varius elit.
+* TODO Etiam non felis volutpat, pellentesque lectus sit amet, ornare nulla.

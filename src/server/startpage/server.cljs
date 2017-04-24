@@ -8,6 +8,8 @@
             [reagent.debug :as d]))
 
 (goog-define DEBUG true)
+(goog-define config-location "config.edn")
+
 (when DEBUG
   (nodejs/enable-util-print!)
   (defonce chalk (nodejs/require "chalk")))
@@ -22,7 +24,7 @@
 (defonce fs (nodejs/require "fs"))
 (defonce child-process (nodejs/require "child_process"))
 
-;; had issues using cljs-http so fell back to request
+;; had issues using cljs-http on node so fell back to request
 (defonce request (nodejs/require "request"))
 
 ;; app gets redefined on reload
@@ -33,7 +35,7 @@
   [req res]
   (.send res (handler/render-page (.-path req))))
 
-(def config (-> (.readFileSync fs "config.edn" "utf8")
+(def config (-> (.readFileSync fs config-location "utf8")
                 read-string))
 
 (defn handle-org

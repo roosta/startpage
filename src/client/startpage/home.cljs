@@ -19,7 +19,7 @@
       (reset! ref (as-> (:body resp) r
                     (.parse js/JSON r)
                     (gobj/getValueByKeys r "data" "children")
-                    (take 30 r))))))
+                    (take 20 r))))))
 
 (defstyle reddit-style
   [:.root {:flex-basis "33.333333333%"
@@ -62,7 +62,7 @@
          [:ul
           (for [node @reddit-data]
             ^{:key (gobj/getValueByKeys node "data" "id")}
-            (let [title (truncate-string (gobj/getValueByKeys node "data" "title") 50)
+            (let [title (truncate-string (gobj/getValueByKeys node "data" "title") 60)
                   id (gobj/getValueByKeys node "data" "id")
                   perma-link (gobj/getValueByKeys node "data" "permalink")]
               [:li {:key id}
