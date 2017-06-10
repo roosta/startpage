@@ -1,8 +1,8 @@
 #+SEQ_TODO: NEXT(t) TODO(t) WAITING(w) MAYBE(m) | DONE(d) CANCELLED(c)
-* TODO Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-* TODO Nunc sit amet mauris venenatis, ultrices leo eget, maximus velit.
-* DONE Mauris pharetra neque quis sagittis maximus.
-* TODO Ut luctus ante sed lorem pellentesque, nec accumsan urna tincidunt.
+* TODO Clicking these in the demo clearly won't do anything
+* TODO But if you have Emacs and the included node server running
+* DONE You can click on an entry
+* TODO And have Emacs open the todo file at the item you clicked
 * TODO Quisque maximus nulla in tempor pretium.
 * MAYBE Mauris ultrices leo eget lacus efficitur, volutpat venenatis sem sollicitudin.
 * TODO Aliquam mattis leo sit amet mi molestie, id varius sem viverra.
