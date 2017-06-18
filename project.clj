@@ -27,10 +27,12 @@
              :css-dirs ["resources/public/css"]
              :server-logfile "log/fighweel-server.log"}
 
-  :aliases {"min"
-            ["do"
-             ["clean"]
-             ["cljsbuild" "once" "server-min" "client-min"]]}
+  :aliases {"min" ["do" 
+                   ["clean"]
+                   ["cljsbuild" "once" "server-min" "client-min"]]
+            "demo" ["do"
+                    ["clean"]
+                    ["cljsbuild" "once" "server-demo" "client-min"]]}
 
   :cljsbuild {:builds [{:id "client"
                         :source-paths ["src/client"]
