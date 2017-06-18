@@ -63,8 +63,7 @@
 (defn handle-emacs
   "open emacs at item line number by matching headline json param using grep
   Use child_process to call shell commands grep and emacsclient
-  This function is hugely insecure, no sanitizing input and not tested for robustness
-  USE AT OWN RISK"
+  Warning: This function is hugely insecure, no sanitizing input and not tested for robustness"
   [req res]
   (let [search-str (gobj/getValueByKeys req "body" "search-str")]
     (.exec child-process
