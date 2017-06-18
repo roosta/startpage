@@ -11,15 +11,19 @@
    [reagent.debug :as d])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
+(def appdb (r/atom {:org nil
+                    :count nil
+                    :reddit nil}))
 
 (defn get-reddit!
-  [ref]
+  "get reddit front page feed, and take c"
+  [c]
   (go
     (let [resp (<! (http/get "/reddit"))]
-      (reset! ref (as-> (:body resp) r
-                    (.parse js/JSON r)
-                    (gobj/getValueByKeys r "data" "children")
-                    (take 20 r))))))
+      (swap! appdb assoc :reddit (as-> (:body resp) r
+                                    (.parse js/JSON r)
+                                    (gobj/getValueByKeys r "data" "children")
+                                    (take c r))))))
 
 (defstyle reddit-style
   [:.root {:flex-basis "33.333333333%"
@@ -39,10 +43,10 @@
   )
 
 (defn reddit
+  "Reddit component, renders reddit feed and updates every minute"
   []
-  (let [reddit-data (r/atom {})
-        reddit-updater (js/setInterval
-                        #(get-reddit! reddit-data)
+  (let [reddit-updater (js/setInterval
+                        #(get-reddit! (:count @appdb))
                         60000)
         header-text (r/atom "Reddit")
         _ (go
@@ -52,7 +56,7 @@
         ]
     (r/create-class
      {:component-will-unmount #(js/clearInterval reddit-updater)
-      :component-will-mount #(get-reddit! reddit-data)
+      :component-will-mount #(get-reddit! (:count @appdb))
       :reagent-render
       (fn []
         [:div
@@ -60,7 +64,7 @@
          [:pre {:class (:header reddit-style)}
           @header-text]
          [:ul
-          (for [node @reddit-data]
+          (for [node (:reddit @appdb)]
             ^{:key (gobj/getValueByKeys node "data" "id")}
             (let [title (truncate-string (gobj/getValueByKeys node "data" "title") 60)
                   id (gobj/getValueByKeys node "data" "id")
@@ -70,10 +74,14 @@
                 title]]))]])})))
 
 (defn get-org!
-  [ref]
+  "gets org nodes via an http request to server, and sets both org content in appdb
+  and the count to use"
+  []
   (go
     (let [resp (<! (http/get "/org"))]
-      (reset! ref (:body resp)))))
+      (swap! appdb assoc
+             :org (:body resp)
+             :count (count (:body resp))))))
 
 (defstyle org-styles
   [:.root {:flex-basis "33.333333333%"
@@ -99,9 +107,8 @@
 
 (defn org
   []
-  (let [org-data (r/atom [])
-        org-updater (js/setInterval
-                     #(get-org! org-data)
+  (let [org-updater (js/setInterval
+                     get-org!
                      60000)
         header-text (r/atom "Todo list")
         _ (go
@@ -110,7 +117,7 @@
               (reset! header-text (:body resp))))]
 
     (r/create-class
-     {:component-will-mount #(get-org! org-data)
+     {:component-will-mount get-org!
       :component-will-unmount #(js/clearInterval org-updater)
       :reagent-render
       (fn []
@@ -134,7 +141,7 @@
                                  (:todo-node org-styles))}
                  (:todo node)]
                 ]))
-           @org-data)]])})))
+           (:org @appdb))]])})))
 
 (defn get-figlet!
   [ref]
@@ -191,7 +198,7 @@
    {:reagent-render
     (fn []
       [:div {:class (:root startpage-style)}
-       [reddit]
+       (if (:count @appdb)
+         [reddit])
        [clock]
-       [org]
-       ])}))
+       [org]])}))
