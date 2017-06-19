@@ -3,12 +3,13 @@
    [cljs.core.async :refer [put! alts! chan <! >! timeout close!]]
    [goog.object :as gobj]
    [startpage.srcery :refer [colors]]
-   [startpage.utils :refer [truncate-string join-classes]]
+   [startpage.utils :refer [truncate-string join-classes transition]]
    [cljs-http.client :as http]
    [garden.units :as u :refer [px pt pc]]
    [reagent.core :as r]
    [cljs-css-modules.macro :refer-macros [defstyle]]
-   [reagent.debug :as d])
+   [reagent.debug :as d]
+   [figwheel.client.utils :as utils])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (def appdb (r/atom {:org nil
@@ -25,21 +26,45 @@
                                     (gobj/getValueByKeys r "data" "children")
                                     (take c r))))))
 
+(defstyle reddit-popover-style
+  [:.root {:width 200
+           :height 200
+           :position "absolute"
+           :right 0
+           :opacity 0}])
+
+(defn reddit-popover
+  []
+  [:div {:class (:root reddit-popover-style)}])
+
 (defstyle reddit-style
   [:.root {:flex-basis "33.333333333%"
            :max-width "33.333333333%"}
    [:ul {:list-style-type "square"
          :padding 0
          :font-size "14px"}
-    [:li {}
+    [:li {:position "relative"}
      [:&:hover {:background (-> colors :bright-black :hex)
                 :font-weight "bold"}]]]
    [:a {:text-decoration "none"
         :color (-> colors :bright-white :hex)}
     [:&:visited {:color (-> colors :white :hex)}]]]
+
   [:.header
    {:font-size "10px"
     :margin-left "-8px"}]
+
+  [:.popover {:width 200
+              :height 200
+              :background-color "white"
+              :position "absolute"
+              :right 0
+              :opacity 0}]
+
+  [:.popover-open (merge {:opacity 1}
+                         (transition {:prop "opacity"
+                                      :duration "400"}))]
+
   )
 
 (defn reddit
@@ -48,6 +73,7 @@
   (let [reddit-updater (js/setInterval
                         #(get-reddit! (:count @appdb))
                         60000)
+        display-popover? (r/atom false)
         header-text (r/atom "Reddit")
         _ (go
             (let [resp (<! (http/post "/figlet" {:json-params {:text "Reddit"
@@ -59,19 +85,23 @@
       :component-will-mount #(get-reddit! (:count @appdb))
       :reagent-render
       (fn []
-        [:div
-         {:class (:root reddit-style)}
-         [:pre {:class (:header reddit-style)}
-          @header-text]
-         [:ul
-          (for [node (:reddit @appdb)]
-            ^{:key (gobj/getValueByKeys node "data" "id")}
-            (let [title (truncate-string (gobj/getValueByKeys node "data" "title") 60)
-                  id (gobj/getValueByKeys node "data" "id")
-                  perma-link (gobj/getValueByKeys node "data" "permalink")]
-              [:li {:key id}
-               [:a {:href (str "https://reddit.com" perma-link) :target "_blank"}
-                title]]))]])})))
+        (let [open? @display-popover?]
+          [:div
+           {:class (:root reddit-style)}
+           [:pre {:class (:header reddit-style)}
+            @header-text]
+           [:ul
+            (for [node (:reddit @appdb)]
+              ^{:key (gobj/getValueByKeys node "data" "id")}
+              (let [title (truncate-string (gobj/getValueByKeys node "data" "title") 60)
+                    id (gobj/getValueByKeys node "data" "id")
+                    perma-link (gobj/getValueByKeys node "data" "permalink")]
+                [:li {:on-mouse-enter #(reset! display-popover? true)
+                      :on-mouse-leave #(reset! display-popover? false)
+                      :key id}
+                 [:a {:href (str "https://reddit.com" perma-link) :target "_blank"}
+                  title]
+                 [:div {:class (join-classes reddit-style :popover (when open? :popover-open))}]]))]]))})))
 
 (defn get-org!
   "gets org nodes via an http request to server, and sets both org content in appdb
