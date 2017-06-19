@@ -12,9 +12,9 @@
    [figwheel.client.utils :as utils])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(def appdb (r/atom {:org nil
-                    :count nil
-                    :reddit nil}))
+(defonce appdb (r/atom {:org nil
+                        :count nil
+                        :reddit nil}))
 
 (defn get-reddit!
   "get reddit front page feed, and take c"
@@ -25,17 +25,6 @@
                                     (.parse js/JSON r)
                                     (gobj/getValueByKeys r "data" "children")
                                     (take c r))))))
-
-(defstyle reddit-popover-style
-  [:.root {:width 200
-           :height 200
-           :position "absolute"
-           :right 0
-           :opacity 0}])
-
-(defn reddit-popover
-  []
-  [:div {:class (:root reddit-popover-style)}])
 
 (defstyle reddit-style
   [:.root {:flex-basis "33.333333333%"
@@ -52,20 +41,7 @@
 
   [:.header
    {:font-size "10px"
-    :margin-left "-8px"}]
-
-  [:.popover {:width 200
-              :height 200
-              :background-color "white"
-              :position "absolute"
-              :right 0
-              :opacity 0}]
-
-  [:.popover-open (merge {:opacity 1}
-                         (transition {:prop "opacity"
-                                      :duration "400"}))]
-
-  )
+    :margin-left "-8px"}])
 
 (defn reddit
   "Reddit component, renders reddit feed and updates every minute"
