@@ -11,3 +11,11 @@
   (->> (select-keys styles classes)
        vals
        (clojure.string/join " ")))
+
+(defn transition
+  [{:keys [prop duration timing-fn delay]
+    :or {prop "all"
+         duration "0s"
+         timing-fn "ease"
+         delay "0s"}}]
+  {:transtion (clojure.string/join " " [prop duration timing-fn delay])})
