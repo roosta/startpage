@@ -13,6 +13,7 @@
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (defonce appdb (r/atom {:org nil
+                        :show-details? false
                         :count nil
                         :reddit nil}))
 
@@ -49,7 +50,6 @@
   (let [reddit-updater (js/setInterval
                         #(get-reddit! (:count @appdb))
                         60000)
-        display-popover? (r/atom false)
         header-text (r/atom "Reddit")
         _ (go
             (let [resp (<! (http/post "/figlet" {:json-params {:text "Reddit"
@@ -61,23 +61,21 @@
       :component-will-mount #(get-reddit! (:count @appdb))
       :reagent-render
       (fn []
-        (let [open? @display-popover?]
-          [:div
-           {:class (:root reddit-style)}
-           [:pre {:class (:header reddit-style)}
-            @header-text]
-           [:ul
-            (for [node (:reddit @appdb)]
-              ^{:key (gobj/getValueByKeys node "data" "id")}
-              (let [title (truncate-string (gobj/getValueByKeys node "data" "title") 60)
-                    id (gobj/getValueByKeys node "data" "id")
-                    perma-link (gobj/getValueByKeys node "data" "permalink")]
-                [:li {:on-mouse-enter #(reset! display-popover? true)
-                      :on-mouse-leave #(reset! display-popover? false)
-                      :key id}
-                 [:a {:href (str "https://reddit.com" perma-link) :target "_blank"}
-                  title]
-                 [:div {:class (join-classes reddit-style :popover (when open? :popover-open))}]]))]]))})))
+        [:div
+         {:class (:root reddit-style)}
+         [:pre {:class (:header reddit-style)}
+          @header-text]
+         [:ul
+          (for [node (:reddit @appdb)]
+            ^{:key (gobj/getValueByKeys node "data" "id")}
+            (let [title (truncate-string (gobj/getValueByKeys node "data" "title") 60)
+                  id (gobj/getValueByKeys node "data" "id")
+                  perma-link (gobj/getValueByKeys node "data" "permalink")]
+              [:li {:on-mouse-enter #(swap! appdb assoc :show-details? true)
+                    :on-mouse-leave #(swap! appdb assoc :show-details? false)
+                    :key id}
+               [:a {:href (str "https://reddit.com" perma-link) :target "_blank"}
+                title]]))]])})))
 
 (defn get-org!
   "gets org nodes via an http request to server, and sets both org content in appdb
@@ -181,7 +179,10 @@
       (fn []
         [:div
          {:class (:root clock-style)}
-         [:img {:src "/img/paxel.png"}]
+
+         (if (:show-details? @appdb)
+           [:img {:src "/img/circle.png"}]
+           [:img {:src "/img/paxel.png"}])
          [:div {:class (:row clock-style)}
           [:pre
            {:class (:clock clock-style)}
@@ -204,7 +205,7 @@
    {:reagent-render
     (fn []
       [:div {:class (:root startpage-style)}
-       (if (:count @appdb)
+       (when (:count @appdb)
          [reddit])
        [clock]
        [org]])}))
