@@ -55,6 +55,7 @@
             (let [resp (<! (http/post "/figlet" {:json-params {:text "Reddit"
                                                                :font "Standard"}}))]
               (reset! header-text (:body resp))))
+        timer (r/atom nil)
         ]
     (r/create-class
      {:component-will-unmount #(js/clearInterval reddit-updater)
@@ -71,8 +72,13 @@
             (let [title (truncate-string (gobj/getValueByKeys node "data" "title") 60)
                   id (gobj/getValueByKeys node "data" "id")
                   perma-link (gobj/getValueByKeys node "data" "permalink")]
-              [:li {:on-mouse-enter #(swap! appdb assoc :show-details? true)
-                    :on-mouse-leave #(swap! appdb assoc :show-details? false)
+              [:li {:on-mouse-enter (fn []
+                                      (reset! timer (js/setTimeout (fn []
+                                                                     (swap! appdb assoc :show-details? true))
+                                                                   500)))
+                    :on-mouse-leave (fn []
+                                      (js/clearTimeout @timer)
+                                      (swap! appdb assoc :show-details? false))
                     :key id}
                [:a {:href (str "https://reddit.com" perma-link) :target "_blank"}
                 title]]))]])})))
