@@ -116,9 +116,9 @@
   (let [org-updater (js/setInterval
                      get-org!
                      60000)
-        header-text (r/atom "Todo list")
+        header-text (r/atom "Todos")
         _ (go
-            (let [resp (<! (http/post "/figlet" {:json-params {:text "Todo list"
+            (let [resp (<! (http/post "/figlet" {:json-params {:text "Todos"
                                                                :font "Standard"}}))]
               (reset! header-text (:body resp))))]
 
