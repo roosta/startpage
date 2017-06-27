@@ -14,6 +14,7 @@
 
 (defonce appdb (r/atom {:org nil
                         :show-details? false
+                        :reddit-node nil
                         :count nil
                         :reddit nil}))
 
@@ -74,7 +75,10 @@
                   perma-link (gobj/getValueByKeys node "data" "permalink")]
               [:li {:on-mouse-enter (fn []
                                       (reset! timer (js/setTimeout (fn []
-                                                                     (swap! appdb assoc :show-details? true))
+                                                                     (swap! appdb assoc
+                                                                            :show-details? true
+                                                                            :reddit-node node
+                                                                            ))
                                                                    500)))
                     :on-mouse-leave (fn []
                                       (js/clearTimeout @timer)
@@ -161,6 +165,29 @@
                                                        :font "DOS Rebel"}}))]
       (reset! ref (:body resp)))))
 
+(defstyle details-style
+  [:.root {:width "100%"
+           :justify-content "center"
+           :position "relative"
+           :display "flex"}]
+  [:.content {:width 460
+              :height 540
+              :margin-bottom (px 20)}]
+  [:.circle {:width 460
+             :height 540
+             :position "absolute"
+             :top 0
+             :margin-bottom (px 20)}])
+
+
+(defn details
+  []
+  [:div {:class (:root details-style)}
+   [:img {:class (:circle details-style)
+          :src "/img/circle.png"}]
+   [:div {:class (:content details-style)}
+    ]])
+
 (defstyle clock-style
   [:.root {:font-size (px 10)
            :display "flex"
@@ -169,7 +196,8 @@
            :max-width "33.3333333%"
            :align-items "center"}
    [:pre {:margin 0}]
-   [:img {:width "75%"
+   [:img {:width 460
+          :height 540
           :margin-bottom (px 20)}]])
 
 (defn clock
@@ -186,8 +214,9 @@
         [:div
          {:class (:root clock-style)}
 
+         #_[details]
          (if (:show-details? @appdb)
-           [:img {:src "/img/circle.png"}]
+           [details]
            [:img {:src "/img/paxel.png"}])
          [:div {:class (:row clock-style)}
           [:pre
