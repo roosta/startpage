@@ -1,3 +1,8 @@
-{ :reddit-feed-url "https://www.reddit.com/.json"
+{:reddit-feed-url "https://www.reddit.com/.json"
+
+ ;; this is only used to set user-agent
+ ;; line 83 in server.cljs
+ :reddit-user "/u/example"
+
  ;; unfortunatly only absolute paths work currently
  :todo-file "TODOs.example.org"}
