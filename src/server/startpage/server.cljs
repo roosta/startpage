@@ -80,7 +80,7 @@
 (defn handle-reddit
   [req res]
   (let [opts (clj->js {:url (:reddit-feed-url config)
-                       :headers {"User-Agent" (str "linux:startpage.roosta.sh:v1.0.0 (by " (:reddit-user config) ")")}})]
+                       :headers {"User-Agent" (str "linux:sh.roosta.startpage:v1.0.0 (by " (:reddit-user config) ")")}})]
     (request opts (fn [error resp body]
                     (.send res body)))))
 
