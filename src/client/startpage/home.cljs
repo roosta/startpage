@@ -5,6 +5,7 @@
    [startpage.srcery :refer [colors]]
    [startpage.utils :refer [truncate-string join-classes transition]]
    [cljs-http.client :as http]
+   [goog.string :as gstr]
    [garden.units :as u :refer [px pt pc]]
    [reagent.core :as r]
    [cljs-css-modules.macro :refer-macros [defstyle]]
@@ -74,12 +75,13 @@
                   id (gobj/getValueByKeys node "data" "id")
                   perma-link (gobj/getValueByKeys node "data" "permalink")]
               [:li {:on-mouse-enter (fn []
-                                      (reset! timer (js/setTimeout (fn []
-                                                                     (swap! appdb assoc
-                                                                            :show-details? true
-                                                                            :reddit-node node
-                                                                            ))
-                                                                   500)))
+                                      (let [show-details? (and (.-data node) (.. node -data -preview))]
+                                        (reset! timer (js/setTimeout (fn []
+                                                                       (swap! appdb assoc
+                                                                              :show-details? show-details?
+                                                                              :reddit-node node
+                                                                              ))
+                                                                     500))))
                     :on-mouse-leave (fn []
                                       (js/clearTimeout @timer)
                                       (swap! appdb assoc :show-details? false))
@@ -167,27 +169,35 @@
       (reset! ref (:body resp)))))
 
 (defstyle details-style
-  [:.root {:width "100%"
+  [:.root {:width 460
+           :height 540
            :justify-content "center"
            :position "relative"
            :display "flex"}]
-  [:.content {:width 460
-              :height 540
-              :margin-bottom (px 20)}]
-  [:.circle {:width 460
-             :height 540
-             :position "absolute"
-             :top 0
-             :margin-bottom (px 20)}])
+  [:.preview-img {:width 455
+                  :position "absolute"
+                  :border-radius "50%"
+                  :top 2
+                  :object-fit "cover"
+                  :z-index -1
+                  :height 462}]
+  [:.circle {:position "absolute"
+             :width "100%"
+             :border "none"
+             :top 0}])
 
 
 (defn details
   []
-  [:div {:class (:root details-style)}
-   [:img {:class (:circle details-style)
-          :src "/img/circle.png"}]
-   [:div {:class (:content details-style)}
-    ]])
+  (let [img-obj (first (.. (:reddit-node @appdb) -data -preview -images))
+        resolutions (.. img-obj -resolutions)
+        url (gstr/unescapeEntities (.-url (last resolutions)))]
+    [:div {:class (:root details-style)}
+      [:img {:class (:circle details-style)
+             :src "/img/circle.png"}]
+     [:img {:src url
+            :class (:preview-img details-style)}
+      ]]))
 
 (defstyle clock-style
   [:.root {:font-size (px 10)
@@ -196,10 +206,10 @@
            :flex-basis "33.3333333%"
            :max-width "33.3333333%"
            :align-items "center"}
-   [:pre {:margin 0}]
-   [:img {:width 460
-          :height 540
-          :margin-bottom (px 20)}]])
+   [:pre {:margin 0}]]
+  [:.paxel {:width 460
+            :height 540
+            :margin-bottom (px 20)}])
 
 (defn clock
   []
@@ -215,10 +225,11 @@
         [:div
          {:class (:root clock-style)}
 
-         #_[details]
-         (if (:show-details? @appdb)
+         [details]
+         #_(if (:show-details? @appdb)
            [details]
-           [:img {:src "/img/paxel.png"}])
+           [:img {:class (:paxel clock-style)
+                  :src "/img/paxel.png"}])
          [:div {:class (:row clock-style)}
           [:pre
            {:class (:clock clock-style)}
