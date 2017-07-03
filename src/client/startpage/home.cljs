@@ -95,7 +95,7 @@
     (let [resp (<! (http/get "/org"))]
       (swap! appdb assoc
              :org (:body resp)
-             :count (count (:body resp))))))
+             :count (count  (filter #(= (:level %) 1) (:body resp)))))))
 
 (defstyle org-styles
   [:.root {:flex-basis "33.333333333%"
@@ -130,6 +130,7 @@
                                                                :font "Standard"}}))]
               (reset! header-text (:body resp))))]
 
+    #_(d/log (filter #(= (:level %) 1) (:org @appdb)))
     (r/create-class
      {:component-will-mount get-org!
       :component-will-unmount #(js/clearInterval org-updater)
