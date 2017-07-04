@@ -10,7 +10,8 @@
    [reagent.core :as r]
    [cljs-css-modules.macro :refer-macros [defstyle]]
    [reagent.debug :as d]
-   [figwheel.client.utils :as utils])
+   [figwheel.client.utils :as utils]
+   [goog.array :as garr])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (defonce appdb (r/atom {:org nil
@@ -132,7 +133,6 @@
                                                                :font "Standard"}}))]
               (reset! header-text (:body resp))))]
 
-    #_(d/log (filter #(= (:level %) 1) (:org @appdb)))
     (r/create-class
      {:component-will-mount get-org!
       :component-will-unmount #(js/clearInterval org-updater)
@@ -193,24 +193,27 @@
   []
   (let [node (:reddit-node @appdb)
         img-obj (first (gobj/getValueByKeys node "data" "preview" "images"))]
-    (d/log (gobj/getValueByKeys node "data" "thumbnail"))
     [:div {:class (:root details-style)}
      [:img {:class (:circle details-style)
             :src "/img/circle.png"}]
      (if img-obj
-       (let [resolutions (gobj/get img-obj "resolutions")
+       (if (garr/isEmpty (gobj/get img-obj "resolutions"))
+         (let [img (gobj/getValueByKeys img-obj "source")
+               url (gstr/unescapeEntities (gobj/get img "url"))]
+           [:img {:src url
+                  :class (:preview-img details-style)}])
+         (let [
+               ;;TODO choose relative
+               img (last (gobj/get img-obj "resolutions"))
 
-             ;;TODO choose relative
-             picked (last resolutions)
-
-             url (gstr/unescapeEntities (gobj/get picked "url"))]
-         [:img {:src url
-                :class (:preview-img details-style)}])
+               url (gstr/unescapeEntities (gobj/get img "url"))]
+           [:img {:src url
+                  :class (:preview-img details-style)}]))
        (case (gobj/getValueByKeys node "data" "thumbnail")
          "self" [:img {:class (:icon details-style)
                        :src "/img/self_icon.png"}]
-         "default" [:img {:class (:icon details-style)
-                          :src "/img/default_icon.png"}])
+         [:img {:class (:icon details-style)
+                :src "/img/default_icon.png"}])
        )]))
 
 (defstyle clock-style
