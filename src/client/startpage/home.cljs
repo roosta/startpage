@@ -182,8 +182,7 @@
                   :z-index -1
                   :height 462}]
   [:.icon {:object-fit "none"
-           :margin-top "-43px"
-           }]
+           :margin-top "-43px"}]
   [:.circle {:position "absolute"
              :width "100%"
              :border "none"
@@ -207,8 +206,11 @@
              url (gstr/unescapeEntities (gobj/get picked "url"))]
          [:img {:src url
                 :class (:preview-img details-style)}])
-       [:img {:class (:icon details-style)
-              :src "/img/self_icon.png"}]
+       (case (gobj/getValueByKeys node "data" "thumbnail")
+         "self" [:img {:class (:icon details-style)
+                       :src "/img/self_icon.png"}]
+         "default" [:img {:class (:icon details-style)
+                          :src "/img/default_icon.png"}])
        )]))
 
 (defstyle clock-style
