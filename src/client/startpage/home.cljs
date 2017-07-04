@@ -58,8 +58,7 @@
             (let [resp (<! (http/post "/figlet" {:json-params {:text "Reddit"
                                                                :font "Standard"}}))]
               (reset! header-text (:body resp))))
-        timer (r/atom nil)
-        ]
+        timer (r/atom nil)]
     (r/create-class
      {:component-will-unmount #(js/clearInterval reddit-updater)
       :component-will-mount #(get-reddit! (:count @appdb))
@@ -79,7 +78,7 @@
                                       (let [show-details? (and (.-data node) (.. node -data -preview))]
                                         (reset! timer (js/setTimeout (fn []
                                                                        (swap! appdb assoc
-                                                                              :show-details? show-details?
+                                                                              :show-details? true
                                                                               :reddit-node node
                                                                               ))
                                                                      500))))
@@ -182,6 +181,9 @@
                   :object-fit "cover"
                   :z-index -1
                   :height 462}]
+  [:.icon {:object-fit "none"
+           :margin-top "-43px"
+           }]
   [:.circle {:position "absolute"
              :width "100%"
              :border "none"
@@ -190,15 +192,24 @@
 
 (defn details
   []
-  (let [img-obj (first (.. (:reddit-node @appdb) -data -preview -images))
-        resolutions (.. img-obj -resolutions)
-        url (gstr/unescapeEntities (.-url (last resolutions)))]
+  (let [node (:reddit-node @appdb)
+        img-obj (first (gobj/getValueByKeys node "data" "preview" "images"))]
+    (d/log (gobj/getValueByKeys node "data" "thumbnail"))
     [:div {:class (:root details-style)}
-      [:img {:class (:circle details-style)
-             :src "/img/circle.png"}]
-     [:img {:src url
-            :class (:preview-img details-style)}
-      ]]))
+     [:img {:class (:circle details-style)
+            :src "/img/circle.png"}]
+     (if img-obj
+       (let [resolutions (gobj/get img-obj "resolutions")
+
+             ;;TODO choose relative
+             picked (last resolutions)
+
+             url (gstr/unescapeEntities (gobj/get picked "url"))]
+         [:img {:src url
+                :class (:preview-img details-style)}])
+       [:img {:class (:icon details-style)
+              :src "/img/self_icon.png"}]
+       )]))
 
 (defstyle clock-style
   [:.root {:font-size (px 10)
