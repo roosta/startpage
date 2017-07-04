@@ -19,3 +19,13 @@
          timing-fn "ease"
          delay "0s"}}]
   {:transtion (clojure.string/join " " [prop duration timing-fn delay])})
+
+(defn k-style-number
+  "Takes a number and turns thousands into single digit with 'k' prepended
+  e.g: 1000 = 1k"
+  [number]
+  (if (> number 999)
+    (if (= (mod (/ number 100) 10) 0)
+      (str (.floor js/Math (/ number 1000)) "k")
+      (str (.floor js/Math (/ (/ number 100) 10.0)) "k"))
+    number))
