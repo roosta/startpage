@@ -34,6 +34,7 @@
            :max-width "33.333333333%"}
    [:ul {:list-style-type "square"
          :padding 0
+         :margin 0
          :font-size "14px"}
     [:li {:position "relative"}
      [:&:hover {:background (-> colors :bright-black :hex)
@@ -206,10 +207,10 @@
            :flex-basis "33.3333333%"
            :max-width "33.3333333%"
            :align-items "center"}
-   [:pre {:margin 0}]]
+   [:pre {:margin 0
+          :margin-top (px 20)}]]
   [:.paxel {:width 460
-            :height 540
-            :margin-bottom (px 20)}])
+            :height 540}])
 
 (defn clock
   []
@@ -225,8 +226,8 @@
         [:div
          {:class (:root clock-style)}
 
-         [details]
-         #_(if (:show-details? @appdb)
+         #_[details]
+         (if (:show-details? @appdb)
            [details]
            [:img {:class (:paxel clock-style)
                   :src "/img/paxel.png"}])
