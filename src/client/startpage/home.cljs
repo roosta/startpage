@@ -3,7 +3,7 @@
    [cljs.core.async :refer [put! alts! chan <! >! timeout close!]]
    [goog.object :as gobj]
    [startpage.srcery :refer [colors]]
-   [startpage.utils :refer [truncate-string join-classes transition]]
+   [startpage.utils :refer [k-style-number truncate-string join-classes transition]]
    [cljs-http.client :as http]
    [goog.string :as gstr]
    [garden.units :as u :refer [px pt pc]]
@@ -181,8 +181,14 @@
                   :object-fit "cover"
                   :z-index -1
                   :height 462}]
+  [:.info {:position "absolute"
+           :bottom 15}]
+  [:.heading {:font-size (px 20)
+            :margin-right (px 14)}]
   [:.icon {:object-fit "none"
            :margin-top "-43px"}]
+  [:.subheading {:font-size (px 14)
+                 :color (-> colors :white :hex)}]
   [:.circle {:position "absolute"
              :width "100%"
              :border "none"
@@ -192,6 +198,9 @@
 (defn details
   []
   (let [node (:reddit-node @appdb)
+        score (k-style-number (gobj/getValueByKeys node "data" "score"))
+        subreddit-name (gobj/getValueByKeys node "data" "subreddit_name_prefixed")
+        num-comments (gobj/getValueByKeys node "data" "num_comments")
         img-obj (first (gobj/getValueByKeys node "data" "preview" "images"))]
     [:div {:class (:root details-style)}
      [:img {:class (:circle details-style)
@@ -213,8 +222,15 @@
          "self" [:img {:class (:icon details-style)
                        :src "/img/self_icon.png"}]
          [:img {:class (:icon details-style)
-                :src "/img/default_icon.png"}])
-       )]))
+                :src "/img/default_icon.png"}]))
+     [:span {:class (:info details-style)}
+      [:span {:class (:heading details-style)}
+       score [:span {:class (:subheading details-style)} "pts"]]
+      [:span {:class (:heading details-style)}
+       num-comments
+       [:span {:class (:subheading details-style)} "comments"]]
+      [:span {:class (:heading details-style)}
+       subreddit-name]]]))
 
 (defstyle clock-style
   [:.root {:font-size (px 10)
