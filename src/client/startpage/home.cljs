@@ -123,6 +123,7 @@
                 :margin-left "6px"}])
 
 (defn org
+  "org todo list component"
   []
   (let [org-updater (js/setInterval
                      get-org!
@@ -161,6 +162,8 @@
            (:org @appdb))]])})))
 
 (defn get-figlet!
+  "pass current time to a post request, and get a figlet font result of input.
+  see server.cljs and figlet-handler"
   [ref]
   (go
     (let [time-str (-> (js/Date.) .toTimeString (clojure.string/split " ") first)
@@ -196,6 +199,8 @@
 
 
 (defn details
+  "Details component that gets shown when user hovers over a reddit node
+  include preview picture, score, number of comments and subreddit name"
   []
   (let [node (:reddit-node @appdb)
         score (k-style-number (gobj/getValueByKeys node "data" "score"))
