@@ -185,7 +185,11 @@
                   :z-index -1
                   :height 462}]
   [:.info {:position "absolute"
-           :bottom 15}]
+           :text-align "center"
+           :bottom 0}]
+  [:.title {:font-size (px 14)
+            :text-align "center"
+            :margin-bottom 5}]
   [:.heading {:font-size (px 20)
             :margin-right (px 14)}]
   [:.icon {:object-fit "none"
@@ -205,6 +209,7 @@
   (let [node (:reddit-node @appdb)
         score (k-style-number (gobj/getValueByKeys node "data" "score"))
         subreddit-name (gobj/getValueByKeys node "data" "subreddit_name_prefixed")
+        title (gobj/getValueByKeys node "data" "title")
         num-comments (gobj/getValueByKeys node "data" "num_comments")
         img-obj (first (gobj/getValueByKeys node "data" "preview" "images"))]
     [:div {:class (:root details-style)}
@@ -228,7 +233,8 @@
                        :src "/img/self_icon.png"}]
          [:img {:class (:icon details-style)
                 :src "/img/default_icon.png"}]))
-     [:span {:class (:info details-style)}
+     [:div {:class (:info details-style)}
+      [:div {:class (:title details-style)} title]
       [:span {:class (:heading details-style)}
        score [:span {:class (:subheading details-style)} "pts"]]
       [:span {:class (:heading details-style)}
