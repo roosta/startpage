@@ -153,7 +153,7 @@
                              (go
                                (let [resp (<! (http/post "/org/open" {:json-params {:search-str (:headline node)}}))]
                                  (when-not (:success resp)
-                                   (d/error "Seems you are running the demo version, or emacs is missing from system")))))}
+                                   (d/error "Seems you are running the demo version, or emacs is missing from host system")))))}
                 [:span (truncate-string (:headline node) 60)]
                 [:span {:class (condp = (:todo node)
                                  "DONE" (join-classes org-styles :todo-node :done)
