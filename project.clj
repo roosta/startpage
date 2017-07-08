@@ -1,6 +1,6 @@
-(defproject startpage "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+(defproject startpage "1.0.0"
+  :description "Startpage for browsers, displays a reddit feed and an org-mode todo file"
+  :url "startpage.roosta.sh"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
