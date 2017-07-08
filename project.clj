@@ -1,5 +1,5 @@
 (defproject startpage "1.0.0"
-  :description "Startpage for browsers, displays a reddit feed and an org-mode todo file"
+  :description "Startpage server/client that displays a reddit feed and an org-mode todo file"
   :url "startpage.roosta.sh"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
@@ -27,7 +27,7 @@
              :css-dirs ["resources/public/css"]
              :server-logfile "log/fighweel-server.log"}
 
-  :aliases {"min" ["do" 
+  :aliases {"min" ["do"
                    ["clean"]
                    ["cljsbuild" "once" "server-min" "client-min"]]
             "demo" ["do"
