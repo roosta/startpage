@@ -95,12 +95,15 @@
 
 (def -main
   (fn []
-    ;; This is the secret sauce. you want to capture a reference to
-    ;; the app function (don't use it directly) this allows it to be redefined on each reload
-    ;; this allows you to change routes and have them hot loaded as you
-    ;; code.
-    (doto (.createServer http #(app %1 %2))
-      (.listen 3000))))
+    (let [port (if DEBUG
+                 3000
+                 80)]
+      ;; This is the secret sauce. you want to capture a reference to
+      ;; the app function (don't use it directly) this allows it to be redefined on each reload
+      ;; this allows you to change routes and have them hot loaded as you
+      ;; code.
+      (doto (.createServer http #(app %1 %2))
+        (.listen port)))))
 
 (set! *main-cli-fn* -main)
 

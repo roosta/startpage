@@ -7,5 +7,5 @@ COPY config.example.edn /usr/src/app
 COPY TODOs.example.org /usr/src/app
 COPY resources/public /usr/src/app/resources/public
 RUN npm install
-EXPOSE 3000
+EXPOSE 80
 CMD ["npm", "start"]
