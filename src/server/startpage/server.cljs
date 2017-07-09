@@ -9,6 +9,7 @@
 
 (goog-define DEBUG true)
 (goog-define config-location "config.edn")
+(goog-define PORT 3000)
 
 (when DEBUG
   (nodejs/enable-util-print!)
@@ -95,15 +96,12 @@
 
 (def -main
   (fn []
-    (let [port (if DEBUG
-                 3000
-                 80)]
       ;; This is the secret sauce. you want to capture a reference to
       ;; the app function (don't use it directly) this allows it to be redefined on each reload
       ;; this allows you to change routes and have them hot loaded as you
       ;; code.
       (doto (.createServer http #(app %1 %2))
-        (.listen port)))))
+        (.listen PORT))))
 
 (set! *main-cli-fn* -main)
 
