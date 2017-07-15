@@ -14,14 +14,14 @@ Requires:
 ```shell
 $ git clone https://github.com/roosta/startpage
 $ cd startpage
-$ script/build
+$ npm install && script/build
 ```
 
 ## Configuration
 This startpage has a configuration file named ```config.edn```
 To get started use the example config:
 ```shell
-cat config.example.edn > config.edn
+$ cat config.example.edn > config.edn
 ```
 
 Config currently has three fields
