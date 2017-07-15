@@ -24,9 +24,14 @@ To get started use the example config:
 cat config.example.edn > config.edn
 ```
 
-Config currently only has two fields
+Config currently has three fields
 ### :reddit-feed
 contains the link to a reddit json feed, you can get this by going to reddit.com and going to **preferences -> RSS feeds -> private listings, frontpage -> JSON** copy that url and paste in config
+
+### :reddit-user
+This is only used to create a unique "User-Agent" header value. Since we are
+populating the reddit feed using a GET request its good form according to reddit
+API documentation to craft a unique user-agent for that request.
 
 ### :org-file
 Physical location to an org file. Currently only supports absolute paths so it would be something like
