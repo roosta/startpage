@@ -54,7 +54,7 @@ App expects an org-mode todo file and only renders level one nodes. Example:
 $ script/run
 ```
 
-Point your browser to http://localhost:3000
+Point your browser to `http://localhost:<PORT>`
 
 ## License
 
