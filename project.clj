@@ -77,7 +77,6 @@
                                    :output-to "target/demo/server.js"
                                    :output-dir "target/demo/server"
                                    :closure-defines {startpage.server/DEBUG false
-                                                     startpage.server/PORT 80
                                                      startpage.server/config-location "config.example.edn"}
                                    :target :nodejs
                                    :optimizations :none

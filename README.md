@@ -33,6 +33,10 @@ This is only used to create a unique "User-Agent" header value. Since we are
 populating the reddit feed using a GET request its good form according to reddit
 API documentation to craft a unique user-agent for that request.
 
+### :server-port
+Pretty self explanatory, the example config uses port 80 since I'm hosting the
+example as a regular webpage, but it can be whatever you want.
+
 ### :org-file
 Physical location to an org file. Currently only supports absolute paths so it would be something like
 ```edn

@@ -9,7 +9,6 @@
 
 (goog-define DEBUG true)
 (goog-define config-location "config.edn")
-(goog-define PORT 3000)
 
 (when DEBUG
   (nodejs/enable-util-print!)
@@ -101,7 +100,7 @@
       ;; this allows you to change routes and have them hot loaded as you
       ;; code.
       (doto (.createServer http #(app %1 %2))
-        (.listen PORT))))
+        (.listen (:server-port config)))))
 
 (set! *main-cli-fn* -main)
 

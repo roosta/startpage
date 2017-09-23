@@ -4,5 +4,8 @@
  ;; line 83 in server.cljs
  :reddit-user "/u/example"
 
+ ;; change this when running local, demo page runs on port 80
+ :server-port 80
+
  ;; unfortunatly only absolute paths work currently
  :todo-file "TODOs.example.org"}
