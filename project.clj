@@ -4,21 +4,21 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
-  :dependencies [[org.clojure/clojure "1.9.0-alpha15"]
-                 [org.clojure/clojurescript "1.9.521"]
-                 [cljs-http "0.1.42"]
-                 [reagent "0.6.1"]
+  :dependencies [[org.clojure/clojure "1.10.1"]
+                 [org.clojure/clojurescript "1.10.764"]
+                 [cljs-http "0.1.46"]
+                 [reagent "0.10.0"]
                  [secretary "1.2.3"]
-                 [org.clojure/core.async "0.3.442"]
-                 [kibu/pushy "0.3.7"]
+                 [org.clojure/core.async "1.2.603"]
+                 [kibu/pushy "0.3.8"]
                  [cljs-css-modules "0.2.1"]]
 
-  :plugins [[lein-cljsbuild "1.1.6-SNAPSHOT"]]
+  :plugins [[lein-cljsbuild "1.1.8"]]
 
-  :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.3.0-alpha3"]
-                                  [binaryage/devtools "0.9.3"]
-                                  [figwheel-sidecar "0.5.10"]]
-                   :plugins [[lein-figwheel "0.5.10"]]
+  :profiles {:dev {:dependencies [[org.clojure/tools.namespace "1.0.0"]
+                                  [binaryage/devtools "1.0.0"]
+                                  [figwheel-sidecar "0.5.20"]]
+                   :plugins [[lein-figwheel "0.5.20"]]
                    :source-paths ["dev" "script"]}}
 
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
