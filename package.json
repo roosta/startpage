@@ -16,7 +16,7 @@
   "devDependencies": {
     "source-map-support": "0.5.19",
     "chalk": "^4.0.0",
-    "ws": "7.4.5"
+    "ws": "7.4.6"
   },
   "scripts": {
     "start": "node target/demo/server.js"
